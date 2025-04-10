@@ -10,6 +10,9 @@
 namespace Game {
     class Scene {
     public:
+        uint8_t level;
+        std::string name;
+        pbh::Texture map;
         std::vector<GameObject*> gameObjects;
     };
 }

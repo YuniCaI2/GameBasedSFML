@@ -8,6 +8,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <sys/types.h>
+#include<vector>
 
 namespace pbh {
     using Vector2 = sf::Vector2f;
@@ -26,6 +27,12 @@ namespace pbh {
         uint32_t moveStride = 1;
         uint32_t maxItem = 3;
         uint32_t currentItemNum = 0;
+        uint32_t money = 0;
+    };
+
+
+
+    struct SceneLayout {
     };
 
     enum chessType {
@@ -36,6 +43,9 @@ namespace pbh {
         Queen
     };
 
+    enum SceneType {
+
+    };
 
 
 }
