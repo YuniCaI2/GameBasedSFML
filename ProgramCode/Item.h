@@ -5,7 +5,6 @@
 #ifndef ITEM_H
 #define ITEM_H
 #include <string>
-
 #include "pbh.h"
 
 enum ItemType {
@@ -18,10 +17,7 @@ namespace Game {
     class Item {
         std::string name;
         std::string description;
-        pbh::Texture texture;
     public:
-        Item(std::string&& _name, std::string&& _description, pbh::Texture&& _texture);
-        Item(const std::string& _name, const std::string& _description, const pbh::Texture& _texture);
 
         [[nodiscard]] std::string getName() const;
         [[nodiscard]] std::string getDescription() const;

@@ -7,10 +7,11 @@
 #include <unordered_map>
 #include <vector>
 #include "GameObject.h"
-#include "Item.h"
 
 
 namespace Game {
+    class Item;
+
     class Player : public GameObject{
     public:
         pbh::PlayerAttribute playerAttribute;

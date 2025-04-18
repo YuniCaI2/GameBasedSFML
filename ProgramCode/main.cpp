@@ -1,37 +1,41 @@
 #include <SFML/Graphics.hpp>
 
+#include "HoverManager.h"
+#include "pbh.h"
+#include "RenderEngine.h"
+#include "Scene.h"
+#include "SceneManager.h"
+#include "Window.h"
+
+class AppInstance {
+public:
+
+private:
+};
+
+
 int main() {
-    // 创建主窗口：1000x800
-    sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML Window Layout");
-
-    // 定义场景矩形：600x600
-    sf::RectangleShape scene(sf::Vector2f(600.f, 600.f));
-    scene.setFillColor(sf::Color::Blue); // 场景填充蓝色，便于可视化
-
-    // 计算场景位置
-    // 水平居中：(1000 - 600) / 2 = 200
-    // 垂直靠下：800 - 600 = 200
-    scene.setPosition(200.f, 200.f); // 设置位置 (x=200, y=200)
 
     // 主循环
-    while (window.isOpen()) {
+    auto testScene = std::make_shared<Game::Scene>();
+    testScene->setSprite("../resource/img.png");
+    Game::SceneManager::getInstance()->setFightScene(testScene);
+    Game::SceneManager::getInstance()->SwitchToFightScene();
+    while (Window::getWindow().isOpen()) {
         // 处理事件
         sf::Event event;
-        while (window.pollEvent(event)) {
+        while (Window::getWindow().pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                window.close();
+                Window::getWindow().close();
             }
         }
-
         // 清屏
-        window.clear(sf::Color::Black); // 主窗口背景为黑色
 
-        // 绘制场景
-        window.draw(scene);
+        Window::getWindow().clear(sf::Color::Black);
+        Game::HoverManager::getInstance()->getHoverObject();
+        Game::RenderEngine::getInstance()->RenderScene(*Game::SceneManager::getInstance()->getCurrentScene());
+        Window::getWindow().display();
 
-        // 显示
-        window.display();
     }
-
     return 0;
 }

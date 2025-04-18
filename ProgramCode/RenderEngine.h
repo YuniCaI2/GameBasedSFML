@@ -5,8 +5,10 @@
 #ifndef RENDERENGINE_H
 #define RENDERENGINE_H
 #include <vector>
+#include <SFML/Window/Window.hpp>
 
 #include "GameObject.h"
+#include "Scene.h"
 
 
 namespace Game {
@@ -14,6 +16,9 @@ namespace Game {
         RenderEngine() = default;
     public:
         static RenderEngine* getInstance();
+        void RenderScene(const Game::Scene& scene);
+        void Display();
+
     };
 }
 
