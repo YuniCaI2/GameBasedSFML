@@ -3,10 +3,8 @@
 //
 
 #include "RenderEngine.h"
-
-#include <__ranges/rend.h>
-
 #include "Window.h"
+#include "Component/RenderComponent.h"
 
 Game::RenderEngine*  Game::RenderEngine::getInstance() {
     static auto* instance = new RenderEngine();
@@ -14,15 +12,22 @@ Game::RenderEngine*  Game::RenderEngine::getInstance() {
 }
 
 void Game::RenderEngine::RenderScene(const Game::Scene &scene) {
-    for(const auto &object : scene.getObjects()) {
-        Window::getWindow().draw(object->getSprite());
+    auto objects = scene.getObjects();
+    for(const auto& object : objects) {
+        object->update();
+        auto renderComponent = object->getComponent<Game::RenderComponent>();
+        if(renderComponent) {
+            auto& sprite = renderComponent->getSprite();
+            Window::getWindow().draw(sprite);
+        }
     }
-    Window::getWindow().draw(scene.getSprite());
 }
+
 
 void Game::RenderEngine::Display() {
 
     Window::getWindow().display();
+
 }
 
 

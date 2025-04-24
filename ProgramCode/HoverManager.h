@@ -15,6 +15,7 @@ namespace Game {
         void unregisterHoverObject(GameObject* gameObject);
         GameObject* getHoverObject();
         GameObject* getLickObject(sf::Event event);
+        sf::Vector2i getMousePos();
     private:
         HoverManager(){};
         std::vector<GameObject*> hoverObjects;

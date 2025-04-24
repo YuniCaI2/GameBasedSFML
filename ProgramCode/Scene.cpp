@@ -5,10 +5,6 @@
 #include "Scene.h"
 
 
-Game::Scene & Game::Scene::setPlayer(Player* player) {
-    this->playerPtr = player;
-    return *this;
-}
 
 Game::Scene & Game::Scene::setLevel(uint8_t level) {
     this->level = level;
@@ -36,11 +32,7 @@ Game::Scene & Game::Scene::setSprite(const std::string& spritePath) {
     return *this;
 }
 
-Game::Scene & Game::Scene::addEnemy(const std::shared_ptr<Enemy> &enemy) {
-    enemies.push_back(enemy);
-    objects.push_back(enemy);
-    return *this;
-}
+
 
 Game::Scene & Game::Scene::addObject(const std::shared_ptr<GameObject> &object) {
     this->objects.push_back(object);

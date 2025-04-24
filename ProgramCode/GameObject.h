@@ -4,21 +4,33 @@
 
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
-#include <SFML/Graphics/Sprite.hpp>
+
 #include "pbh.h"
 
 namespace Game {
+    class Component;
+
     class GameObject {
     public:
         sf::Vector2i globalPosition;
         sf::Vector2i relativePosition;
+        bool isHovered{false};
+        bool isClicked{false};
 
-        void setTexture(const std::shared_ptr<pbh::gameObjectSpirit>& spirit);
-        sf::Sprite getSprite() const;
         GameObject() = default;
+
+        void AddComponent(std::unique_ptr<Component>&& component);
+
+        template<typename T>
+        const T* getComponent();
+
+        void update();
+        void initial();
+
         virtual ~GameObject() = default;
-    protected:
-        std::shared_ptr<pbh::gameObjectSpirit> gameObjectSpirit;
+    private:
+        std::vector<std::unique_ptr<Component>> components;
+
 
 
     };

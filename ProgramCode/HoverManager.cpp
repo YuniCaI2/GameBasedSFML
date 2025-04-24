@@ -24,12 +24,12 @@ void Game::HoverManager::unregisterHoverObject(GameObject *gameObject) {
 }
 
 Game::GameObject * Game::HoverManager::getHoverObject() {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(Window::getWindow());
     for(const auto& i : hoverObjects) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(Window::getWindow());
         auto relativeX = mousePos.x - i->globalPosition.x;
         auto relativeY = mousePos.y - i->globalPosition.y;
         if(relativeX > 0 && relativeX <= pbh::patchWidth && relativeY > 0 && relativeY <= pbh::patchHeight) {
+            i->isHovered = true;
             return i;
         }
     }
@@ -38,17 +38,21 @@ Game::GameObject * Game::HoverManager::getHoverObject() {
     return nullptr;
 }
 
+
+
 Game::GameObject * Game::HoverManager::getLickObject(sf::Event event) {
     auto hoverObject = getHoverObject();
     if(hoverObject != nullptr) {
         if(event.type == sf::Event::MouseButtonPressed) {
             if(event.mouseButton.button == sf::Mouse::Left) {
                 pbh::DeBug("Hover mouse button pressed", event.mouseButton.x, event.mouseButton.y);
-
                 return hoverObject;
-
             }
         }
     }
     return nullptr;
+}
+
+sf::Vector2i Game::HoverManager::getMousePos() {
+    return sf::Mouse::getPosition(Window::getWindow());
 }
