@@ -16,18 +16,20 @@ namespace Game {
         Scene& setLevel(uint8_t level);
         Scene& setName(const std::string& name);
         Scene& setSprite(const std::string& spritePath);
-        Scene& addObject(const std::shared_ptr<GameObject>& object);
+        Scene& addObject(GameObject* object);
 
-        pbh::SceneType getSceneType() const;
-        sf::Sprite getSprite() const;
-        std::vector<std::shared_ptr<GameObject>> getObjects() const;
+        pbh::SceneType getSceneType();
+        sf::Sprite getSprite();
+        std::vector<GameObject*> getObjects();
     private:
         pbh::SceneType sceneType{};
         uint8_t level;
         std::string name;
         sf::Texture textureData;
         sf::Sprite sprite;
-        std::vector<std::shared_ptr<GameObject>> objects;
+        std::vector<GameObject*> objects;
+        GameObject* player;
+        std::vector<GameObject*> enemies;
 
     };
 }

@@ -12,6 +12,9 @@ namespace Game {
     public:
         virtual void update(GameObject* gameObject) = 0;
         virtual ~Component() = default;
+
+    protected:
+        GameObject* gameObject;
     };
 }
 

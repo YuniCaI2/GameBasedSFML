@@ -16,7 +16,8 @@ namespace Game {
         RenderEngine() = default;
     public:
         static RenderEngine* getInstance();
-        void RenderScene(const Game::Scene& scene);
+        void Clear();
+        void RenderScene(Game::Scene& scene);
         void Display();
 
     };

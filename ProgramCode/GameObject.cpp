@@ -3,26 +3,28 @@
 //
 
 #include "GameObject.h"
-#include "Component.h"
+#include "Component/Component.h"
 
 
-void Game::GameObject::AddComponent(std::unique_ptr<Component> &&component) {
-    components.push_back(std::move(component));
+void Game::GameObject::AddComponent(Component* component) {
+    components.push_back(component);
 }
 
-template<typename T>
-const T * Game::GameObject::getComponent() {
-    for (auto& component : components) {
-        if (dynamic_cast<T*>(component.get())) {
-            return dynamic_cast<T*>(component.get());
-        }
-    }
-    return nullptr;
+void Game::GameObject::setGlobalPosition(int x, int y) {
+    //这个函数不会在游戏对象的坐标上进行修改
 }
+
+void Game::GameObject::setRelativePosition(int x, int y) {
+    this->relativePosition.x = x;
+    this->relativePosition.y = y;
+    this->globalPosition.x = this->relativePosition.x * pbh::patchWidth + pbh::scenePosX;
+    this->globalPosition.y = this->relativePosition.y * pbh::patchHeight + pbh::scenePosY;
+}
+
 
 void Game::GameObject::update() {
     for(auto& component : components) {
-        component->update();
+        component->update(this);
     }
 }
 

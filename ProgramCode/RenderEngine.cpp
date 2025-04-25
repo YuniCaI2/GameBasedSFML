@@ -11,11 +11,17 @@ Game::RenderEngine*  Game::RenderEngine::getInstance() {
     return instance;
 }
 
-void Game::RenderEngine::RenderScene(const Game::Scene &scene) {
+void Game::RenderEngine::Clear() {
+    Window::getWindow().clear(sf::Color::Black);
+}
+
+
+void Game::RenderEngine::RenderScene(Game::Scene &scene) {
+    Window::getWindow().draw(scene.getSprite());
     auto objects = scene.getObjects();
-    for(const auto& object : objects) {
+    for(auto& object : objects) {
         object->update();
-        auto renderComponent = object->getComponent<Game::RenderComponent>();
+        auto* renderComponent = object->getComponent<Game::RenderComponent>();
         if(renderComponent) {
             auto& sprite = renderComponent->getSprite();
             Window::getWindow().draw(sprite);

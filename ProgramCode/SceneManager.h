@@ -6,7 +6,6 @@
 #define SCENEMANAGER_H
 #include <string>
 
-#include "Player.h"
 #include "Scene.h"
 
 
@@ -29,13 +28,11 @@ namespace Game {
         void setMainScene(const std::shared_ptr<Scene>& mainScene);
         void setFightScene(const std::shared_ptr<Scene>& fightScene);
 
-        Player* getPlayer();
     private:
         std::shared_ptr<Scene> shopScene;
         std::shared_ptr<Scene> mainScene;
         std::shared_ptr<Scene> fightScene;
         CurScene currentScene{CurScene::Main};
-        Player player;
 
     };
 }

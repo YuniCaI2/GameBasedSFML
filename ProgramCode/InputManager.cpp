@@ -24,6 +24,13 @@ void Game::InputManager::unregisterGameObject(GameObject *gameObject) {
 }
 
 void Game::InputManager::processEvent(sf::Event& event) {
+    //刷新悬停状态
+    for(auto& gameObject : gameObjects) {
+        gameObject->isHovered = false;
+    }
+    
+
+    //处理事件
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
             clickedObject = HoverManager::getInstance()->getLickObject(event);

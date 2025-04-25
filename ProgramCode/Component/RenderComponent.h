@@ -19,18 +19,9 @@ namespace sf {
 namespace Game {
     class RenderComponent : public Component{
     public:
-        void setTexture(const std::string& texturePath);
-        void setHoverTexture(const std::string& texturePath);
-        void update(GameObject* gameObject) override;
-        sf::Sprite& getSprite() const;
-
-    protected:
-        sf::Texture texture;
-        sf::Sprite defaultSprite;
-        sf::Texture hoverSpriteTexture;
-        sf::Sprite hoverSprite;
-        GameObject* gameObject{nullptr};
-
+        virtual void setHoverTexture(const std::string& texturePath) = 0;
+        virtual void setDefaultTexture(const std::string& texturePath) = 0;
+        virtual sf::Sprite& getSprite() = 0;
     };
 }
 

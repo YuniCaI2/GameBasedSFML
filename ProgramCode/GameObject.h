@@ -19,20 +19,28 @@ namespace Game {
 
         GameObject() = default;
 
-        void AddComponent(std::unique_ptr<Component>&& component);
+        void AddComponent(Component* component);
+        void setGlobalPosition(int x, int y);
+        void setRelativePosition(int x, int y);
 
         template<typename T>
-        const T* getComponent();
+        inline T * getComponent() {
+            for (auto &component: components) {
+                if (dynamic_cast<T *>(component)) {
+                    return dynamic_cast<T *>(component);
+                }
+            }
+            return nullptr;
+        }
 
         void update();
+
         void initial();
 
         virtual ~GameObject() = default;
+
     private:
-        std::vector<std::unique_ptr<Component>> components;
-
-
-
+        std::vector<Component* > components;
     };
 }
 

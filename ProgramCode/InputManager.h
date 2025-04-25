@@ -6,6 +6,7 @@
 #define INPUTMANAGER_H
 #include <SFML/Window/Event.hpp>
 #include<unordered_map>
+#include<vector>
 
 namespace Game {
     class GameObject;

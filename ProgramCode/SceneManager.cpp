@@ -49,7 +49,3 @@ void Game::SceneManager::setFightScene(const std::shared_ptr<Scene>& fightScene)
     this->fightScene = fightScene;
 }
 
-Game::Player * Game::SceneManager::getPlayer() {
-    return &player;
-}
-

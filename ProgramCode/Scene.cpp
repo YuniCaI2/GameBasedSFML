@@ -34,19 +34,19 @@ Game::Scene & Game::Scene::setSprite(const std::string& spritePath) {
 
 
 
-Game::Scene & Game::Scene::addObject(const std::shared_ptr<GameObject> &object) {
+Game::Scene & Game::Scene::addObject(GameObject* object) {
     this->objects.push_back(object);
     return *this;
 }
 
-pbh::SceneType Game::Scene::getSceneType()  const{
+pbh::SceneType Game::Scene::getSceneType(){
     return sceneType;
 }
 
-sf::Sprite Game::Scene::getSprite() const {
+sf::Sprite Game::Scene::getSprite(){
     return sprite;
 }
 
-std::vector<std::shared_ptr<Game::GameObject>> Game::Scene::getObjects() const {
+std::vector<Game::GameObject*> Game::Scene::getObjects(){
     return objects;
 }
