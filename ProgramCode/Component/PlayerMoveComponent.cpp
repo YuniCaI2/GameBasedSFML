@@ -9,6 +9,7 @@
 
 void Game::PlayerMoveComponent::update(GameObject *gameObject) {
     auto inputManager = InputManager::getInstance();
+    this->gameObject = gameObject;
     if (inputManager->isKeyPressed(sf::Keyboard::W)) {
         moveTo(gameObject->relativePosition.x, gameObject->relativePosition.y - 1);
     }
@@ -36,8 +37,11 @@ void Game::PlayerMoveComponent::update(GameObject *gameObject) {
 }
 
 void Game::PlayerMoveComponent::moveTo(int x, int y) {
-    gameObject->relativePosition.x = x;
-    gameObject->relativePosition.y = y;
-    gameObject->globalPosition.x = gameObject->relativePosition.x * pbh::patchWidth + pbh::scenePosX;
-    gameObject->globalPosition.y = gameObject->relativePosition.y * pbh::patchHeight + pbh::scenePosY;
+    if(x >= 0 && x <= 7 && y >= 0 && y <= 7) {
+        gameObject->relativePosition.x = x;
+        gameObject->relativePosition.y = y;
+        gameObject->globalPosition.x = gameObject->relativePosition.x * pbh::patchWidth + pbh::scenePosX;
+        gameObject->globalPosition.y = gameObject->relativePosition.y * pbh::patchHeight + pbh::scenePosY;
+        std::cout << "Move to: " << gameObject->relativePosition.x << ", " << gameObject->relativePosition.y << std::endl;
+    }
 }

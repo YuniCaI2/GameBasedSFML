@@ -24,11 +24,11 @@ void Game::InputManager::unregisterGameObject(GameObject *gameObject) {
 }
 
 void Game::InputManager::processEvent(sf::Event& event) {
+
     //刷新悬停状态
     for(auto& gameObject : gameObjects) {
         gameObject->isHovered = false;
     }
-    
 
     //处理事件
     if (event.type == sf::Event::MouseButtonPressed) {
@@ -51,11 +51,16 @@ void Game::InputManager::processEvent(sf::Event& event) {
 }
 
 void Game::InputManager::update() {
+    //记录上一轮信息
+    lastKeyStates = keyStates;
 }
 
 bool Game::InputManager::isKeyPressed(sf::Keyboard::Key key) const {
-    auto it = keyStates.find(key);
-    return (it != keyStates.end()) ? it->second : false;
+    auto currentIt = keyStates.find(key);
+    auto lastIt = lastKeyStates.find(key);
+    // 只在按键状态从未按下变为按下时返回true
+    return (currentIt != keyStates.end() && currentIt->second) &&
+           (lastIt == lastKeyStates.end() || !lastIt->second);
 }
 
 Game::GameObject * Game::InputManager::getClickedObject() {
@@ -67,7 +72,7 @@ Game::GameObject * Game::InputManager::getHoverObject() {
 }
 
 sf::Vector2i Game::InputManager::getMousePos() {
-    HoverManager::getInstance()->getMousePos();
+    return  HoverManager::getInstance()->getMousePos();
 }
 
 

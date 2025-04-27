@@ -20,10 +20,10 @@ void Game::RenderEngine::RenderScene(Game::Scene &scene) {
     Window::getWindow().draw(scene.getSprite());
     auto objects = scene.getObjects();
     for(auto& object : objects) {
-        object->update();
         auto* renderComponent = object->getComponent<Game::RenderComponent>();
         if(renderComponent) {
             auto& sprite = renderComponent->getSprite();
+            // std::cout << "Render" << std::endl;
             Window::getWindow().draw(sprite);
         }
     }

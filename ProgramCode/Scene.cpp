@@ -39,6 +39,24 @@ Game::Scene & Game::Scene::addObject(GameObject* object) {
     return *this;
 }
 
+Game::Scene & Game::Scene::setPlayer(GameObject *player) {
+    this->objects.push_back(player);
+    this->player = player;
+    return *this;
+}
+
+Game::Scene & Game::Scene::addEnemy(GameObject *enemy) {
+    this->enemies.push_back(enemy);
+    this->objects.push_back(enemy);
+    return *this;
+}
+
+Game::Scene & Game::Scene::setEnemies(const std::vector<GameObject *> &enemies) {
+    this->enemies = enemies;
+    this->objects.insert(objects.end(), enemies.begin(), enemies.end());
+    return *this;
+}
+
 pbh::SceneType Game::Scene::getSceneType(){
     return sceneType;
 }

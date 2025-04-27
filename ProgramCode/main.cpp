@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 
-#include "HoverManager.h"
 #include "pbh.h"
 #include "RenderEngine.h"
 #include "Scene.h"
@@ -8,6 +7,8 @@
 #include "Window.h"
 #include "./Component/PlayerMoveComponent.h"
 #include "./Component/PlayerRenderComponent.h"
+#include <unordered_map>
+#include "InputManager.h"
 
 namespace Game {
     enum class ComponentType {
@@ -24,13 +25,17 @@ namespace Game {
             initialComponent();
             initialPlayer();
             initialSceneManager();
+
+            //register
+            InputManager::getInstance()->registerGameObject(player);
         }
 
         void initialSceneManager() {
             //初始化战斗场景
             {
+                testScene = std::make_shared<Game::Scene>();
                 testScene->setSprite("../resource/img.png");
-                testScene->addObject(Player);
+                testScene->setPlayer(player);
                 Game::SceneManager::getInstance()->setFightScene(testScene);
                 Game::SceneManager::getInstance()->SwitchToFightScene();
             }
@@ -42,20 +47,50 @@ namespace Game {
         }
 
         void initialPlayer() {
-            Player = new GameObject();
-            Player->setRelativePosition(100, 100);
+            auto* Player = new GameObject();
+            gameObjects.push_back(Player);
+            Player->setRelativePosition(4, 7);
             Player->AddComponent(componentsPool[ComponentType::PlayerRender]);
             Player->AddComponent(componentsPool[ComponentType::PlayerMove]);
+            Player->update();
+            player = Player;
         }
 
         void initialComponent() {
             componentsPool[ComponentType::PlayerMove] = new Game::PlayerMoveComponent();
-            componentsPool[ComponentType::PlayerRender] = new Game::PlayerRenderComponent();
+            //
+            auto* playRender = new Game::PlayerRenderComponent();
+            playRender->setDefaultTexture("../resource/GameObject/KingPlayer.png");
+            componentsPool[ComponentType::PlayerRender] = playRender;
+        }
+
+        //主循环
+        void run() {
+            while (Window::getWindow().isOpen()) {
+                sf::Event event;
+                Game::InputManager::getInstance()->update();//刷新按键状态不得已操作
+                while (Window::getWindow().pollEvent(event)) {
+                    if (event.type == sf::Event::Closed) {
+                        Window::getWindow().close();
+                    }
+                    Game::InputManager::getInstance()->processEvent(event);
+                }
+                logical();
+                RenderEngine::getInstance()->Clear();
+                RenderEngine::getInstance()->RenderScene(*SceneManager::getInstance()->getCurrentScene());
+                RenderEngine::getInstance()->Display();
+            }
+        }
+
+        void logical() {
+            for(auto& gameObject : gameObjects) {
+                gameObject->update();
+            }
         }
 
         void clearGameObject() {
-            for (auto& ptr : componentsPool) {
-                delete ptr.second;
+            for (auto& ptr : gameObjects) {
+                delete ptr;
             }
         }
 
@@ -73,9 +108,9 @@ namespace Game {
 
     private:
         std::unordered_map<ComponentType,Component*> componentsPool;
-        GameObject* Player; // 测试使用
-        auto testScene = std::make_shared<Game::Scene>();
+        std::shared_ptr<Scene> testScene;
         std::vector<GameObject*> gameObjects;
+        GameObject* player;
     };
 }
 
@@ -89,22 +124,7 @@ int main() {
     //initial Test
     Game::AppInstance app;
     app.initial();
-
-    while (Window::getWindow().isOpen()) {
-        // 处理事件
-        sf::Event event;
-        while (Window::getWindow().pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                Window::getWindow().close();
-            }
-        }
-        // 清屏
-
-        Window::getWindow().clear(sf::Color::Black);
-        Game::HoverManager::getInstance()->getHoverObject();
-        Game::RenderEngine::getInstance()->RenderScene(*Game::SceneManager::getInstance()->getCurrentScene());
-        Window::getWindow().display();
-
-    }
+    app.run();
+    app.clear();    // 释放资源
     return 0;
 }

@@ -28,17 +28,17 @@ Game::GameObject * Game::HoverManager::getHoverObject() {
         sf::Vector2i mousePos = sf::Mouse::getPosition(Window::getWindow());
         auto relativeX = mousePos.x - i->globalPosition.x;
         auto relativeY = mousePos.y - i->globalPosition.y;
+        // pbh::DeBug("Hover :", mousePos.x, mousePos.y);
+
         if(relativeX > 0 && relativeX <= pbh::patchWidth && relativeY > 0 && relativeY <= pbh::patchHeight) {
             i->isHovered = true;
             return i;
         }
+        i->isHovered = false;
     }
-    // pbh::DeBug("Hover :", mousePos.x, mousePos.y);
 
     return nullptr;
 }
-
-
 
 Game::GameObject * Game::HoverManager::getLickObject(sf::Event event) {
     auto hoverObject = getHoverObject();

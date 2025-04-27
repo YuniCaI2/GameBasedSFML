@@ -18,7 +18,6 @@ void Game::PlayerRenderComponent::setDefaultTexture(const std::string &texturePa
     auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
     // pbh::DeBug("Size:", scaleX, scaleY);
     defaultSprite.setScale(scaleX, scaleY);
-    defaultSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
 }
 
 void Game::PlayerRenderComponent::setHoverTexture(const std::string &texturePath) {
@@ -32,11 +31,13 @@ void Game::PlayerRenderComponent::setHoverTexture(const std::string &texturePath
     auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
     // pbh::DeBug("Size:", scaleX, scaleY);
     hoverSprite.setScale(scaleX, scaleY);
-    hoverSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
 }
 
 void Game::PlayerRenderComponent::update(GameObject *gameObject) {
     this->gameObject = gameObject;
+    defaultSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
+    hoverSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
+    // pbh::DeBug("Position:", gameObject->globalPosition.x, gameObject->globalPosition.y);
 }
 
 sf::Sprite & Game::PlayerRenderComponent::getSprite(){

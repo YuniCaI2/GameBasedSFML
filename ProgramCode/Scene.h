@@ -17,7 +17,9 @@ namespace Game {
         Scene& setName(const std::string& name);
         Scene& setSprite(const std::string& spritePath);
         Scene& addObject(GameObject* object);
-
+        Scene& setPlayer(GameObject* player);
+        Scene& addEnemy(GameObject* enemy);
+        Scene& setEnemies(const std::vector<GameObject*>& enemies);
         pbh::SceneType getSceneType();
         sf::Sprite getSprite();
         std::vector<GameObject*> getObjects();

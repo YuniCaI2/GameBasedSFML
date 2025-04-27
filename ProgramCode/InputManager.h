@@ -17,6 +17,7 @@ namespace Game {
         GameObject* clickedObject{nullptr};
         GameObject* hoverObject{nullptr};
         std::unordered_map<sf::Keyboard::Key, bool> keyStates;
+        std::unordered_map<sf::Keyboard::Key, bool> lastKeyStates;
     public:
         static InputManager* getInstance();
         void registerGameObject(GameObject* gameObject);

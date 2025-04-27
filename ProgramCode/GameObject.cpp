@@ -19,6 +19,7 @@ void Game::GameObject::setRelativePosition(int x, int y) {
     this->relativePosition.y = y;
     this->globalPosition.x = this->relativePosition.x * pbh::patchWidth + pbh::scenePosX;
     this->globalPosition.y = this->relativePosition.y * pbh::patchHeight + pbh::scenePosY;
+    // pbh::DeBug("GameObject globalPosition:", globalPosition.x, globalPosition.y);
 }
 
 

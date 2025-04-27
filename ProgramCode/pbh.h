@@ -58,10 +58,10 @@ namespace pbh {
     };
 
     enum chessType {
-        Pawn,
-        Knight,
-        Bishop,
-        Rook,
+        Pawn,//小兵
+        Knight,//骑士
+        Bishop,//相
+        Rook,//车
         Queen
     };
 
