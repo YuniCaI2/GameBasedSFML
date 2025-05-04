@@ -6,8 +6,8 @@
 #include "Component/Component.h"
 
 
-void Game::GameObject::AddComponent(Component* component) {
-    components.push_back(component);
+void Game::GameObject::AddComponent(std::unique_ptr<Component>&& component) {
+    components.push_back(std::move(component));
 }
 
 void Game::GameObject::setGlobalPosition(int x, int y) {
@@ -30,4 +30,7 @@ void Game::GameObject::update() {
 }
 
 void Game::GameObject::initial() {
+    for(auto& component : components) {
+        component->initial(this);
+    }
 }

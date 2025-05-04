@@ -26,6 +26,10 @@ void Game::PlayerStatsComponent::setMoveNum(int moveNum) {
     this->maxMoveNum = moveNum;
 }
 
+void Game::PlayerStatsComponent::setCurrentMoveNum(int currentMoveNum) {
+    this->currentMoveNum = currentMoveNum;
+}
+
 void Game::PlayerStatsComponent::setAttackNum(int attackNum) {
     this->maxAttackNum = attackNum;
 }
@@ -62,4 +66,11 @@ bool Game::PlayerStatsComponent::isAlive() const {
 void Game::PlayerStatsComponent::turnStart() {
     currentMoveNum = maxMoveNum;
     currentAttackNum = maxAttackNum;
+}
+
+void Game::PlayerStatsComponent::initial(GameObject *gameObject) {
+    this->gameObject = gameObject;
+    maxHealth = 5;
+    maxAttackNum = 1;
+    maxMoveNum = 1;
 }

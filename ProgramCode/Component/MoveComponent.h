@@ -12,6 +12,7 @@ namespace Game {
         virtual void moveTo(int x, int y) = 0;
     protected:
 
+
     };
 }
 

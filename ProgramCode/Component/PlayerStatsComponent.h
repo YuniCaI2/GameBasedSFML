@@ -14,6 +14,7 @@ namespace Game {
         void setMaxHealth(int maxHealth) override;
         void setCurrentHealth(int currentHealth) override;
         void setMoveNum(int moveNum) override;
+        void setCurrentMoveNum(int currentMoveNum) override;
         void setAttackNum(int attackNum) override;
         void turnStart() override;//这个函数的目的是在每回合开始前角色或者敌方单位进行设置
         int getMaxHealth() const override;
@@ -22,6 +23,7 @@ namespace Game {
         int getMoveNum() const override;
         void update(GameObject *gameObject) override;
         bool isAlive() const override;
+        void initial(GameObject *gameObject) override;
 
     private:
         int maxHealth;

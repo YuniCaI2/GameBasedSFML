@@ -10,6 +10,7 @@
 namespace Game {
     class Component {
     public:
+        virtual void initial(GameObject* gameObject) = 0;
         virtual void update(GameObject* gameObject) = 0;
         virtual ~Component() = default;
 

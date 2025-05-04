@@ -5,6 +5,7 @@
 #ifndef STATSCOMPONENT_H
 #define STATSCOMPONENT_H
 #include "Component.h"
+#include<SFML/Graphics.hpp>
 
 
 namespace Game {
@@ -15,6 +16,7 @@ namespace Game {
         virtual void setCurrentHealth(int currentHealth) = 0;
         virtual int getCurrentHealth() const = 0;
         virtual void setMoveNum(int moveNum) = 0;
+        virtual void setCurrentMoveNum(int moveNUm) = 0;
         virtual int getMoveNum() const = 0;
         virtual void setAttackNum(int attackNum) = 0;
         virtual int getAttackNum() const = 0;

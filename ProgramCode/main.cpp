@@ -8,12 +8,21 @@
 #include "./Component/PlayerMoveComponent.h"
 #include "./Component/PlayerRenderComponent.h"
 #include <unordered_map>
+
+#include "GUIManager.h"
 #include "InputManager.h"
+#include "Component/AttackRangeComponent.h"
+#include "Component/PlayerStatsComponent.h"
+#include "Component/WeaponComponent.h"
 
 namespace Game {
+    //注册组件
     enum class ComponentType {
         PlayerMove,
         PlayerRender,
+        PlayerStats,
+        Weapon,
+        AttackRange
     };
 
 
@@ -25,6 +34,7 @@ namespace Game {
             initialComponent();
             initialPlayer();
             initialSceneManager();
+            Game::GUIManager::getInstance()->init(player);
 
             //register
             InputManager::getInstance()->registerGameObject(player);
@@ -34,7 +44,7 @@ namespace Game {
             //初始化战斗场景
             {
                 testScene = std::make_shared<Game::Scene>();
-                testScene->setSprite("../resource/img.png");
+                testScene->setSprite("../resource/img.png");//设置场景背景
                 testScene->setPlayer(player);
                 Game::SceneManager::getInstance()->setFightScene(testScene);
                 Game::SceneManager::getInstance()->SwitchToFightScene();
@@ -50,18 +60,35 @@ namespace Game {
             auto* Player = new GameObject();
             gameObjects.push_back(Player);
             Player->setRelativePosition(4, 7);
-            Player->AddComponent(componentsPool[ComponentType::PlayerRender]);
-            Player->AddComponent(componentsPool[ComponentType::PlayerMove]);
-            Player->update();
+            Player->AddComponent(std::move(componentsPool[ComponentType::PlayerRender]));
+            Player->AddComponent(std::move(componentsPool[ComponentType::PlayerMove]));
+            Player->AddComponent(std::move(componentsPool[ComponentType::PlayerStats]));
+            Player->AddComponent(std::move(componentsPool[ComponentType::Weapon]));
+            Player->AddComponent(std::move(componentsPool[ComponentType::AttackRange]));
+            Player->initial();
             player = Player;
         }
 
         void initialComponent() {
-            componentsPool[ComponentType::PlayerMove] = new Game::PlayerMoveComponent();
-            //
-            auto* playRender = new Game::PlayerRenderComponent();
+            //初始化玩家移动组件
+            componentsPool[ComponentType::PlayerMove].reset(new PlayerMoveComponent());
+            //初始化渲染组件
+            auto playRender =std::make_unique<Game::PlayerRenderComponent>();
             playRender->setDefaultTexture("../resource/GameObject/KingPlayer.png");
-            componentsPool[ComponentType::PlayerRender] = playRender;
+            playRender->setHoverTexture("../resource/GameObject/KingPlayerSelected.png");
+            componentsPool[ComponentType::PlayerRender].reset(playRender.release());
+
+            //初始化玩家属性组件
+            auto playerStats = std::make_unique<Game::PlayerStatsComponent>();
+            componentsPool[ComponentType::PlayerStats].reset(playerStats.release());
+
+            //初始化武器组件
+            auto playerWeapon = std::make_unique<WeaponComponent>();
+            componentsPool[ComponentType::Weapon].reset(playerWeapon.release());
+
+            //初始化攻击范围显示
+            auto playerAttackRange = std::make_unique<AttackRangeComponent>();
+            componentsPool[ComponentType::AttackRange].reset(playerAttackRange.release());
         }
 
         //主循环
@@ -76,7 +103,9 @@ namespace Game {
                     Game::InputManager::getInstance()->processEvent(event);
                 }
                 logical();
+
                 RenderEngine::getInstance()->Clear();
+                GUIManager::getInstance()->draw();
                 RenderEngine::getInstance()->RenderScene(*SceneManager::getInstance()->getCurrentScene());
                 RenderEngine::getInstance()->Display();
             }
@@ -86,6 +115,7 @@ namespace Game {
             for(auto& gameObject : gameObjects) {
                 gameObject->update();
             }
+            GUIManager::getInstance()->update();
         }
 
         void clearGameObject() {
@@ -94,23 +124,15 @@ namespace Game {
             }
         }
 
-        void clearComponent() {
-            for (auto& component : componentsPool) {
-                delete component.second;
-            }
-            componentsPool.clear();
-        }
-
         void clear() {
             clearGameObject();
-            clearComponent();
         }
 
     private:
-        std::unordered_map<ComponentType,Component*> componentsPool;
+        std::unordered_map<ComponentType,std::unique_ptr<Component>> componentsPool;
         std::shared_ptr<Scene> testScene;
         std::vector<GameObject*> gameObjects;
-        GameObject* player;
+        GameObject* player{};
     };
 }
 

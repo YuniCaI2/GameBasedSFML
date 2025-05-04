@@ -4,6 +4,7 @@
 
 #ifndef ATTACHCOMPONENT_H
 #define ATTACHCOMPONENT_H
+#include "Component.h"
 
 
 namespace Game {
@@ -11,12 +12,9 @@ namespace Game {
 }
 
 namespace Game {
-    class AttackComponent {
+    class AttackComponent: public Component{
     public:
         virtual bool Attack(GameObject* hitObject) = 0;//返回是否攻击到对方
-
-    protected:
-        int damage;
     };
 }
 

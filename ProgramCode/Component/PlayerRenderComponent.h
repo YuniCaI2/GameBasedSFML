@@ -13,6 +13,7 @@ namespace Game {
         void setDefaultTexture(const std::string &texturePath) override;
         void setHoverTexture(const std::string &texturePath) override;
         void update(GameObject *gameObject) override;
+        void initial(GameObject *gameObject) override;
         sf::Sprite& getSprite() override;
     private:
         sf::Texture defaultTexture;

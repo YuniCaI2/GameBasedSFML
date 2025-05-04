@@ -3,36 +3,54 @@
 //
 
 #include "PlayerMoveComponent.h"
+
+#include "PlayerStatsComponent.h"
 #include "../InputManager.h"
 #include "../GameObject.h"
 
-
-void Game::PlayerMoveComponent::update(GameObject *gameObject) {
-    auto inputManager = InputManager::getInstance();
+void Game::PlayerMoveComponent::initial(GameObject *gameObject){
     this->gameObject = gameObject;
-    if (inputManager->isKeyPressed(sf::Keyboard::W)) {
-        moveTo(gameObject->relativePosition.x, gameObject->relativePosition.y - 1);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::S)) {
-        moveTo(gameObject->relativePosition.x, gameObject->relativePosition.y + 1);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::A)) {
-        moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::D)) {
-        moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::Q)) {
-        moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y - 1);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::E)) {
-        moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y - 1);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::Z)) {
-        moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y + 1);
-    }
-    if (inputManager->isKeyPressed(sf::Keyboard::C)) {
-        moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y + 1);
+}
+
+void Game::PlayerMoveComponent::update(GameObject *gameObject)//这里需要耦合了，没办法。。。 // 和属性组件内聚
+{
+    auto playerStats = gameObject->getComponent<Game::PlayerStatsComponent>();
+    if (playerStats->isAlive() && playerStats->getMoveNum() > 0){
+        auto inputManager = InputManager::getInstance();
+
+        this->gameObject = gameObject;
+        if (inputManager->isKeyPressed(sf::Keyboard::W)) {
+            moveTo(gameObject->relativePosition.x, gameObject->relativePosition.y - 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::S)) {
+            moveTo(gameObject->relativePosition.x, gameObject->relativePosition.y + 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::A)) {
+            moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::D)) {
+            moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::Q)) {
+            moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y - 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::E)) {
+            moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y - 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::Z)) {
+            moveTo(gameObject->relativePosition.x - 1, gameObject->relativePosition.y + 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
+        if (inputManager->isKeyPressed(sf::Keyboard::C)) {
+            moveTo(gameObject->relativePosition.x + 1, gameObject->relativePosition.y + 1);
+            playerStats->setCurrentMoveNum(playerStats->getMoveNum() - 1);
+        }
     }
 }
 

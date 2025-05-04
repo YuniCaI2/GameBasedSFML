@@ -65,12 +65,26 @@ namespace pbh {
         Queen
     };
 
+    enum class EnemyType {
+        Pawn,//小兵
+        Knight,//骑士
+        Bishop,//相
+        Rook,//车
+    };
+    //敌人类型和武器类型一一对应
+
     enum SceneType {
         Draw,
         Fight,
         Main
     };
 
+    enum class WeaponType {
+        Pawn,   //小兵
+        Knight, //骑士
+        Bishop, // 相
+        Rook,   //车
+    };
 
 }
 

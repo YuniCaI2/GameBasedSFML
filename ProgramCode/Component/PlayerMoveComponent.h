@@ -10,6 +10,7 @@
 namespace Game {
     class PlayerMoveComponent: public MoveComponent{
     public:
+        void initial(GameObject *gameObject) override;
         void update(GameObject *gameObject) override;
         void moveTo(int x, int y) override;
     private:

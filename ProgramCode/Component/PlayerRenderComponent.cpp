@@ -5,7 +5,12 @@
 #include "PlayerRenderComponent.h"
 
 
-
+void Game::PlayerRenderComponent::initial(GameObject *gameObject) {
+    this->gameObject = gameObject;
+    defaultSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
+    hoverSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
+    //这里和update的效果相同
+} 
 
 void Game::PlayerRenderComponent::setDefaultTexture(const std::string &texturePath) {
     if(!defaultTexture.loadFromFile(texturePath)) {

@@ -4,6 +4,8 @@
 
 #include "RenderEngine.h"
 #include "Window.h"
+#include "Component/AttackComponent.h"
+#include "Component/AttackRangeComponent.h"
 #include "Component/RenderComponent.h"
 
 Game::RenderEngine*  Game::RenderEngine::getInstance() {
@@ -25,6 +27,15 @@ void Game::RenderEngine::RenderScene(Game::Scene &scene) {
             auto& sprite = renderComponent->getSprite();
             // std::cout << "Render" << std::endl;
             Window::getWindow().draw(sprite);
+        }
+        if (object->isClicked) {
+            auto* attackRange = object->getComponent<AttackRangeComponent>();
+            if (attackRange) {
+                const auto attackRects = attackRange->getRectangles();
+                for (const auto& rect : attackRects) {
+                    Window::getWindow().draw(rect);
+                }
+            }
         }
     }
 }
