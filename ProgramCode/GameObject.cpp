@@ -37,3 +37,4 @@ void Game::GameObject::initial() {
         component->initial(this);
     }
 }
+

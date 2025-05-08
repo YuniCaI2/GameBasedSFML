@@ -11,6 +11,7 @@
 #include "../GUIManager.h"
 
 bool Game::PlayerAttackComponent::Attack(GameObject *hitObject) {
+    auto enemyType = gameObject->getComponent<AttackRangeComponent>()->getMatchEnemy(); // 这里是懒了，其实可以只调用一次getComponent，算了...
     const auto attackRangePositions = gameObject->getComponent<AttackRangeComponent>()->getAttackRangePositions();
     auto playerStats = gameObject->getComponent<PlayerStatsComponent>();
     auto hitObjectPosition = hitObject->relativePosition;
@@ -19,7 +20,10 @@ bool Game::PlayerAttackComponent::Attack(GameObject *hitObject) {
             for (const auto& p : attackRangePositions) {
                 if (p == hitObjectPosition) {
                     auto stats = hitObject->getComponent<EnemyStatsComponent>();
-                    stats->setCurrentHealth(stats->getCurrentHealth() - 1);//扣血
+                    if (stats->getEnemyType() != enemyType)
+                        stats->setCurrentHealth(stats->getCurrentHealth() - 1);//扣血
+                    else
+                        stats->setCurrentHealth(0); // 一击必杀
                     hitObject->isClicked = false;
                     return true;
                 }

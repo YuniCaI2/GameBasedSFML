@@ -15,6 +15,7 @@ namespace Game {
         std::vector<sf::Vector2i> getAttackRangePositions() const;
         std::vector<sf::RectangleShape> getRectangles() const;
         pbh::EnemyType getMatchEnemy();
+
     private:
         sf::RectangleShape block;
         std::vector<sf::RectangleShape> rectangles;

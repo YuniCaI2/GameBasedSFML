@@ -9,9 +9,11 @@
 #include "./Component/PlayerRenderComponent.h"
 #include <unordered_map>
 
+#include "EnemyAI.h"
 #include "GUIManager.h"
 #include "InputManager.h"
 #include "Component/AttackRangeComponent.h"
+#include "Component/EnemyAttackComponent.h"
 #include "Component/EnemyRenderComponent.h"
 #include "Component/EnemyStatsComponent.h"
 #include "Component/PlayerAttackComponent.h"
@@ -20,6 +22,9 @@
 
 namespace Game {
     //注册组件
+    //准确来说这里有点多余，当时我想着复用组件的
+    //但是啊，我搞错了，敌人会随时死亡和清除，这样组件的必须和游戏对象的生命周期牢牢绑定
+    //所以这个枚举类是设计失误的产物
     enum class ComponentType {
         PlayerMove,
         PlayerRender,
@@ -53,10 +58,12 @@ namespace Game {
                 testScene->setSprite("../resource/img.png")
                 .setSceneType(pbh::Fight);//设置场景背景
                 testScene->setPlayer(player);
-                testScene->addEnemy(createEnemy(pbh::EnemyType::Pawn, 4,4));
-                testScene->addEnemy(createEnemy(pbh::EnemyType::Bishop, 5,5));
+
+                //生成敌人
                 Game::SceneManager::getInstance()->setFightScene(testScene);
                 Game::SceneManager::getInstance()->SwitchToFightScene();
+                auto[type, x, y] = Game::EnemyAI::getInstance()->generateEnemy();
+                SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
             }
             //初始化主页面
             {
@@ -68,6 +75,7 @@ namespace Game {
         void initialPlayer() {
             auto* Player = new GameObject();
             gameObjects.push_back(Player);
+            //为玩家对象添加组件，可以仔细看看添加组件和获得组件的方法，用到了Cpp的RTTI，运行时多态实现
             Player->setRelativePosition(4, 7);
             Player->AddComponent(std::move(componentsPool[ComponentType::PlayerRender]));
             Player->AddComponent(std::move(componentsPool[ComponentType::PlayerMove]));
@@ -110,22 +118,26 @@ namespace Game {
         //生成敌人的工厂函数
         GameObject* createEnemy(pbh::EnemyType enemyType, int x, int y) {
             //初始化敌人的组件
-                //状态
+            //状态
             auto enemyStats = std::make_unique<EnemyStatsComponent>();
             enemyStats->initialEnemyType(enemyType);
-                //渲染模块
+            //渲染模块
             auto enemyRender = std::make_unique<EnemyRenderComponent>();
+            //敌人攻击模块
+            auto enemyAttack = std::make_unique<EnemyAttackComponent>();
 
             //敌人实例的创建
             GameObject* enemy = new GameObject();
             enemy->setRelativePosition(x, y);
 
+
             //载入组件
             enemy->AddComponent(std::move(enemyStats));
             enemy->AddComponent(std::move(enemyRender));
+            enemy->AddComponent(std::move(enemyAttack));
             enemy->initial();
 
-
+            //自动塞到整体游戏的对象池，便于统一管理内存
             gameObjects.push_back(enemy);
 
             return enemy;
@@ -143,7 +155,6 @@ namespace Game {
                     Game::InputManager::getInstance()->processEvent(event);
                 }
                 logical();
-
                 RenderEngine::getInstance()->Clear();
                 GUIManager::getInstance()->draw();
                 RenderEngine::getInstance()->RenderScene(*SceneManager::getInstance()->getCurrentScene());
@@ -155,10 +166,18 @@ namespace Game {
             for(auto& gameObject : gameObjects) {
                 gameObject->update();
             }
+            if (!player->getComponent<PlayerStatsComponent>()->isAlive()) {
+                std::wstring text = L"玩家已经死了";
+                Game::GUIManager::getInstance()->writeText(text);
+                return;
+            }
+
             if (Game::SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Fight) {
+                auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+
+                auto playerStats = player->getComponent<PlayerStatsComponent>();
                 if (round) {
                     auto clickedObject = Game::InputManager::getInstance()->getClickedObject();
-                    auto playerStats = player->getComponent<PlayerStatsComponent>();
                     //攻击行为
                     if (clickedObject != nullptr && clickedObject != player) {  // 这里设计出了点问题，这应该写在攻击组件内，这里渗透出来了，这是错误的
                                                                                 // 先获取到点击的对象
@@ -178,11 +197,46 @@ namespace Game {
                         }
                     }
                     if (playerStats->getMoveNum() <= 0 && playerStats->getAttackNum() <= 0) {
-                        round = 0;
+                        round = false;
                         std::wstring text = L"敌方回合";
                         Game::GUIManager::getInstance()->writeText(text);
                     }
+                    if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::P)) {
+                        std::wstring text = L"玩家跳过，敌方回合";
+                        Game::GUIManager::getInstance()->writeText(text);
+                        round = false;
+                    }
+                    removeDeadEnemies();
                 }else {
+                    auto AI = Game::EnemyAI::getInstance();
+                    auto [index, x, y] = AI->getAction(currentScene->getEnemies(), player);
+                    if (index != -1 && index < currentScene->getEnemies().size()) {
+                        auto enemy = currentScene->getEnemies()[index];
+                        auto enemyAttack = enemy->getComponent<EnemyAttackComponent>();
+                        enemyAttack->moveTo(x,y);
+                        auto playerPositions = player->relativePosition;
+                        if (playerPositions.x == x && playerPositions.y == y) {
+                            enemyAttack->Attack(player);
+                            auto enemyStats = enemy->getComponent<EnemyStatsComponent>();
+                            enemyStats->setCurrentHealth(0);
+                        }
+                    }
+
+
+                    std::wstring text = L"玩家回合！";
+                    Game::GUIManager::getInstance()->writeText(text);
+                    playerStats->turnStart();
+
+                    removeDeadEnemies();
+                    roundNum++;
+                    round = true;
+                    if (roundNum%3 == 0) {
+                        auto [type, x, y] = AI->generateEnemy();
+                        Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
+                        Game::InputManager::getInstance()->registerGameObject(SceneManager::getInstance()->getCurrentScene()->getEnemies().back());
+                        //增加敌人
+                        //并且注册
+                    }
 
                 }
             }
@@ -190,8 +244,37 @@ namespace Game {
             GUIManager::getInstance()->update();
         }
 
+        void removeDeadEnemies() {
+            //删除场景中的尸体
+            auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+            currentScene->clearDeadEnemies();
+            //真正让他在游戏中消失
+            auto check = [](GameObject* enemy) {
+                // std::cerr << "Checking enemy at " << enemy << std::endl;
+                auto stats = enemy->getComponent<EnemyStatsComponent>();
+                if (stats == nullptr) {     //这里是避免访问到玩家，因为玩家是没有这个组件的，会返回一个空指针
+                    return false;
+                }
+                return (! stats->isAlive());
+            };
+            auto its = std::remove_if(gameObjects.begin(), gameObjects.end(), check);//叫its是为了有区分度 。。。。。
+            for (auto it = its; it != gameObjects.end(); ++it) {
+                Game::InputManager::getInstance()->unregisterGameObject(*it); // 注销死掉的对象
+                if (*it != nullptr) {
+                    delete *it;
+                }
+                std::cerr << "Size is " << gameObjects.size() << std::endl;
+                std::cerr << "delete"  << it - gameObjects.begin() << std::endl;
+            }
+            gameObjects.erase(its, gameObjects.end());
+            if (gameObjects.empty()) {
+                std::cout << "game objects are empty" << std::endl;
+            }
+        }
+
         void clearGameObject() {
             for (auto& ptr : gameObjects) {
+                if (ptr != nullptr)
                 delete ptr;
             }
         }
@@ -206,6 +289,7 @@ namespace Game {
         std::shared_ptr<Scene> testScene;
         std::vector<GameObject*> gameObjects;
         GameObject* player{};
+        int roundNum{1};
     };
 }
 

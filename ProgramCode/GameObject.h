@@ -38,6 +38,7 @@ namespace Game {
 
         void initial();
 
+
         virtual ~GameObject() = default;
 
     private:

@@ -121,6 +121,7 @@ std::vector<sf::Vector2i> Game::AttackRangeComponent::getAttackRangePositions() 
     return AttackRangePositions;
 }
 
+
 std::vector<sf::RectangleShape> Game::AttackRangeComponent::getRectangles() const {
     return rectangles;
 }

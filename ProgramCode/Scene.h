@@ -24,6 +24,8 @@ namespace Game {
         pbh::SceneType getSceneType();
         sf::Sprite getSprite();
         std::vector<GameObject*> getObjects();
+        std::vector<GameObject*> getEnemies();
+        void clearDeadEnemies();
     private:
         pbh::SceneType sceneType{pbh::Fight};
         uint8_t level;
