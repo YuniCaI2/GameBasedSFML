@@ -1,6 +1,25 @@
-#include "EnemyStatsComponent.h"
+﻿#include "EnemyStatsComponent.h"
+
+#include "../GUIManager.h"
 
 namespace Game {
+
+    std::wstring enemyTypeToWstring(pbh::EnemyType enemyType) {
+        switch (enemyType) {
+            case pbh::EnemyType::Pawn:
+                return L"Pawn";
+            case pbh::EnemyType::Knight:
+                return L"Knight";
+            case pbh::EnemyType::Bishop:
+                return L"Bishop";
+            default:
+                return L"Rook";
+        }
+    }
+
+    EnemyStatsComponent::EnemyStatsComponent() {
+
+    }
 
     void EnemyStatsComponent::setMaxHealth(int maxHealth) {
         this->maxHealth = maxHealth;
@@ -12,6 +31,11 @@ namespace Game {
 
     void EnemyStatsComponent::setMoveNum(int moveNum) {
         this->moveNum = moveNum;
+    }
+
+    void EnemyStatsComponent::setCurrentMoveNum(int currentMoveNum) {
+        //空接口，这是玩家的状态，理论上敌人都不用设置移动次数这个设定
+        //只有血量和类型需要关注
     }
 
     void EnemyStatsComponent::setAttackNum(int attackNum) {
@@ -41,7 +65,13 @@ namespace Game {
     }
 
     void EnemyStatsComponent::update(GameObject *gameObject) {
-        //不知道要写什么，这个组件是个容器，我认为它是个单向的
+        // 响应悬停
+        if (gameObject->isHovered && !gameObject->isClicked) {
+            std::wstring text = L"敌人类型：" + enemyTypeToWstring(enemyType) + L"\n";
+            text += L"剩余血量：" + std::to_wstring(currentHealth);
+
+            GUIManager::getInstance()->writeText(text);
+        }
     }
 
     bool EnemyStatsComponent::isAlive() const {

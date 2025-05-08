@@ -12,11 +12,14 @@ namespace Game {
     public:
         void initial(GameObject *gameObject) override;
         void update(GameObject *gameObject) override;
-
+        std::vector<sf::Vector2i> getAttackRangePositions() const;
         std::vector<sf::RectangleShape> getRectangles() const;
+        pbh::EnemyType getMatchEnemy();
     private:
         sf::RectangleShape block;
         std::vector<sf::RectangleShape> rectangles;
+        std::vector<sf::Vector2i> AttackRangePositions;
+        pbh::EnemyType MatchEnemy{pbh::EnemyType::Pawn};
     };
 }
 

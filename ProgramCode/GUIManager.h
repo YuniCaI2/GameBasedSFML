@@ -54,7 +54,7 @@ class GUIManager
         void update();
         void draw();
         void init(GameObject* player);
-        void writeText(const sf::Text& inputText);
+        void writeText(const std::wstring& inputText);
         void clearTextBuffer();
         static GUIManager *getInstance();
 

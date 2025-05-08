@@ -57,6 +57,11 @@ Game::Scene & Game::Scene::setEnemies(const std::vector<GameObject *> &enemies) 
     return *this;
 }
 
+Game::Scene & Game::Scene::setSceneType(pbh::SceneType sceneType) {
+    this->sceneType = sceneType;
+    return *this;
+}
+
 pbh::SceneType Game::Scene::getSceneType(){
     return sceneType;
 }

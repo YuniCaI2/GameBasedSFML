@@ -203,10 +203,12 @@ namespace Game{
 
 
 
-    void GUIManager::writeText(const sf::Text& inputText)
+    void GUIManager::writeText(const std::wstring& inputText)
     {
-        textBuffer = inputText;
-        textBuffer.setPosition(630, 130);
+        textBuffer.setFont(font);
+        textBuffer.setString(inputText);
+        textBuffer.setPosition(textX, textY);
+        textBuffer.setCharacterSize(16);
     }
     
     void GUIManager::clearTextBuffer()

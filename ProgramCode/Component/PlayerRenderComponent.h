@@ -21,6 +21,7 @@ namespace Game {
         sf::Sprite defaultSprite;
         sf::Sprite hoverSprite;
     };
+
 }
 
 

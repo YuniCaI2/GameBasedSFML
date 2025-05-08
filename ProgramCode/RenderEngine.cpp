@@ -23,11 +23,6 @@ void Game::RenderEngine::RenderScene(Game::Scene &scene) {
     auto objects = scene.getObjects();
     for(auto& object : objects) {
         auto* renderComponent = object->getComponent<Game::RenderComponent>();
-        if(renderComponent) {
-            auto& sprite = renderComponent->getSprite();
-            // std::cout << "Render" << std::endl;
-            Window::getWindow().draw(sprite);
-        }
         if (object->isClicked) {
             auto* attackRange = object->getComponent<AttackRangeComponent>();
             if (attackRange) {
@@ -36,6 +31,11 @@ void Game::RenderEngine::RenderScene(Game::Scene &scene) {
                     Window::getWindow().draw(rect);
                 }
             }
+        }
+        if(renderComponent) {
+            auto& sprite = renderComponent->getSprite();
+            // std::cout << "Render" << std::endl;
+            Window::getWindow().draw(sprite);
         }
     }
 }

@@ -29,9 +29,11 @@ void Game::InputManager::processEvent(sf::Event& event) {
     for(auto& gameObject : gameObjects) {
         gameObject->isHovered = false;
     }
+    clickedObject = nullptr;
+    hoverObject = nullptr;
 
     //处理事件
-    if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.type == sf::Event::MouseButtonReleased) {
         if (event.mouseButton.button == sf::Mouse::Left) {
             clickedObject = HoverManager::getInstance()->getLickObject(event);
             if (clickedObject != nullptr) {

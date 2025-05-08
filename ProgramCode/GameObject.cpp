@@ -3,7 +3,10 @@
 //
 
 #include "GameObject.h"
+
+#include "GUIManager.h"
 #include "Component/Component.h"
+#include "Component/EnemyStatsComponent.h"
 
 
 void Game::GameObject::AddComponent(std::unique_ptr<Component>&& component) {

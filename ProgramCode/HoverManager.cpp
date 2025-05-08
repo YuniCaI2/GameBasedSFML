@@ -43,7 +43,7 @@ Game::GameObject * Game::HoverManager::getHoverObject() {
 Game::GameObject * Game::HoverManager::getLickObject(sf::Event event) {
     auto hoverObject = getHoverObject();
     if(hoverObject != nullptr) {
-        if(event.type == sf::Event::MouseButtonPressed) {
+        if(event.type == sf::Event::MouseButtonReleased) {
             if(event.mouseButton.button == sf::Mouse::Left) {
                 pbh::DeBug("Hover mouse button pressed", event.mouseButton.x, event.mouseButton.y);
                 return hoverObject;

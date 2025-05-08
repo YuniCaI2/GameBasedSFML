@@ -9,7 +9,7 @@
 #include <string>
 #include<vector>
 #include<SFML/Graphics.hpp>
-
+#include<unordered_map>
 
 namespace pbh {
     using ActionID = uint32_t;
@@ -84,6 +84,13 @@ namespace pbh {
         Knight, //骑士
         Bishop, // 相
         Rook,   //车
+    };
+
+    inline std::unordered_map<EnemyType, std::pair<std::string, std::string>> enemyTexPathTable = {
+        {EnemyType::Pawn, {"../resource/GameObject/Enemy/Pawn.png","../resource/GameObject/Enemy/PawnSelected.png"}},
+        {EnemyType::Knight, {"../resource/GameObject/Enemy/Knight.png","../resource/GameObject/Enemy/KnightSelected.png"}},
+        {EnemyType::Bishop, {"../resource/GameObject/Enemy/Bishop.png","../resource/GameObject/Enemy/BishopSelected.png"}},
+        {EnemyType::Rook, {"../resource/GameObject/Enemy/Rook.png","../resource/GameObject/Enemy/RookSelected.png"}},
     };
 
 }

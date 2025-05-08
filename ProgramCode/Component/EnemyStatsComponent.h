@@ -7,9 +7,11 @@ namespace Game{
     //敌人属性的组件基类
     class EnemyStatsComponent : public StatsComponent{
     public:
+        EnemyStatsComponent();
         void setMaxHealth(int maxHealth) override;
         void setCurrentHealth(int currentHealth) override;
         void setMoveNum(int moveNum) override;
+        void setCurrentMoveNum(int currentMoveNum) override;
         void setAttackNum(int attackNum) override;
         void turnStart() override;
         int getMaxHealth() const override;

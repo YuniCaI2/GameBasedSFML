@@ -10,12 +10,13 @@
 namespace Game {
     class PlayerStatsComponent : public StatsComponent {
     public:
-        PlayerStatsComponent(int maxHealth = 5, int maxMoveNum = 1, int maxAttackNum = 1);
+        PlayerStatsComponent(int maxHealth = 5, int maxMoveNum = 1, int maxAttackNum = 2);
         void setMaxHealth(int maxHealth) override;
         void setCurrentHealth(int currentHealth) override;
         void setMoveNum(int moveNum) override;
         void setCurrentMoveNum(int currentMoveNum) override;
         void setAttackNum(int attackNum) override;
+        void setCurrentAttackNum(int attackNum);
         void turnStart() override;//这个函数的目的是在每回合开始前角色或者敌方单位进行设置
         int getMaxHealth() const override;
         int getAttackNum() const override;

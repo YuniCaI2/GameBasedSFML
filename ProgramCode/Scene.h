@@ -20,11 +20,12 @@ namespace Game {
         Scene& setPlayer(GameObject* player);
         Scene& addEnemy(GameObject* enemy);
         Scene& setEnemies(const std::vector<GameObject*>& enemies);
+        Scene& setSceneType(pbh::SceneType sceneType);
         pbh::SceneType getSceneType();
         sf::Sprite getSprite();
         std::vector<GameObject*> getObjects();
     private:
-        pbh::SceneType sceneType{};
+        pbh::SceneType sceneType{pbh::Fight};
         uint8_t level;
         std::string name;
         sf::Texture textureData;
