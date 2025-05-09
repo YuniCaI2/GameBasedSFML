@@ -27,6 +27,9 @@ void Game::GameObject::setRelativePosition(int x, int y) {
 
 
 void Game::GameObject::update() {
+    if(components.empty()) {
+        return;
+    }
     for(auto& component : components) {
         component->update(this);
     }

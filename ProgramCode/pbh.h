@@ -93,6 +93,17 @@ namespace pbh {
         {EnemyType::Rook, {"../resource/GameObject/Enemy/Rook.png","../resource/GameObject/Enemy/RookSelected.png"}},
     };
 
+    template<typename T>
+    inline bool checkVector(const std::vector<T>& arr) {
+        auto last = arr[0];
+        for(int i = 1; i < arr.size(); i++) {
+            if(last == arr[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
 
 #endif //PBH_H

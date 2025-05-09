@@ -36,9 +36,7 @@ namespace Game {
 
 
     class AppInstance {
-
     public:
-
         void initial() {
             initialComponent();
             initialPlayer();
@@ -46,7 +44,7 @@ namespace Game {
             Game::GUIManager::getInstance()->init(player);
 
             //register
-            for (auto& g : gameObjects) {
+            for (auto &g: gameObjects) {
                 Game::InputManager::getInstance()->registerGameObject(g);
             }
         }
@@ -56,24 +54,23 @@ namespace Game {
             {
                 testScene = std::make_shared<Game::Scene>();
                 testScene->setSprite("../resource/img.png")
-                .setSceneType(pbh::Fight);//设置场景背景
+                        .setSceneType(pbh::Fight); //设置场景背景
                 testScene->setPlayer(player);
 
                 //生成敌人
                 Game::SceneManager::getInstance()->setFightScene(testScene);
                 Game::SceneManager::getInstance()->SwitchToFightScene();
-                auto[type, x, y] = Game::EnemyAI::getInstance()->generateEnemy();
+                auto [type, x, y] = Game::EnemyAI::getInstance()->generateEnemy();
                 SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
             }
             //初始化主页面
             {
-
             }
             //初始化商店页面
         }
 
         void initialPlayer() {
-            auto* Player = new GameObject();
+            auto *Player = new GameObject();
             gameObjects.push_back(Player);
             //为玩家对象添加组件，可以仔细看看添加组件和获得组件的方法，用到了Cpp的RTTI，运行时多态实现
             Player->setRelativePosition(4, 7);
@@ -93,7 +90,7 @@ namespace Game {
             //初始化玩家移动组件
             componentsPool[ComponentType::PlayerMove].reset(new PlayerMoveComponent());
             //初始化渲染组件
-            auto playRender =std::make_unique<Game::PlayerRenderComponent>();
+            auto playRender = std::make_unique<Game::PlayerRenderComponent>();
             playRender->setDefaultTexture("../resource/GameObject/KingPlayer.png");
             playRender->setHoverTexture("../resource/GameObject/KingPlayerSelected.png");
             componentsPool[ComponentType::PlayerRender].reset(playRender.release());
@@ -116,7 +113,7 @@ namespace Game {
         }
 
         //生成敌人的工厂函数
-        GameObject* createEnemy(pbh::EnemyType enemyType, int x, int y) {
+        GameObject *createEnemy(pbh::EnemyType enemyType, int x, int y) {
             //初始化敌人的组件
             //状态
             auto enemyStats = std::make_unique<EnemyStatsComponent>();
@@ -127,7 +124,7 @@ namespace Game {
             auto enemyAttack = std::make_unique<EnemyAttackComponent>();
 
             //敌人实例的创建
-            GameObject* enemy = new GameObject();
+            GameObject *enemy = new GameObject();
             enemy->setRelativePosition(x, y);
 
 
@@ -147,7 +144,7 @@ namespace Game {
         void run() {
             while (Window::getWindow().isOpen()) {
                 sf::Event event;
-                Game::InputManager::getInstance()->update();//刷新按键状态不得已操作
+                Game::InputManager::getInstance()->update(); //刷新按键状态不得已操作
                 while (Window::getWindow().pollEvent(event)) {
                     if (event.type == sf::Event::Closed) {
                         Window::getWindow().close();
@@ -163,13 +160,14 @@ namespace Game {
         }
 
         void logical() {
-            for(auto& gameObject : gameObjects) {
-                gameObject->update();
-            }
             if (!player->getComponent<PlayerStatsComponent>()->isAlive()) {
                 std::wstring text = L"玩家已经死了";
                 Game::GUIManager::getInstance()->writeText(text);
                 return;
+            }
+
+            for (auto &gameObject: gameObjects) {
+                gameObject->update();
             }
 
             if (Game::SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Fight) {
@@ -179,20 +177,23 @@ namespace Game {
                 if (round) {
                     auto clickedObject = Game::InputManager::getInstance()->getClickedObject();
                     //攻击行为
-                    if (clickedObject != nullptr && clickedObject != player) {  // 这里设计出了点问题，这应该写在攻击组件内，这里渗透出来了，这是错误的
-                                                                                // 先获取到点击的对象
+                    if (clickedObject != nullptr && clickedObject != player) {
+                        // 这里设计出了点问题，这应该写在攻击组件内，这里渗透出来了，这是错误的
+                        // 先获取到点击的对象
                         auto attackComponent = player->getComponent<PlayerAttackComponent>();
-                        if (playerStats->getAttackNum() <= 0) { // 判断是否有能力攻击，这应该写在组件中,因为没有能力攻击也是一种攻击失败
+                        if (playerStats->getAttackNum() <= 0) {
+                            // 判断是否有能力攻击，这应该写在组件中,因为没有能力攻击也是一种攻击失败
                             std::wstring text = L"你没有攻击次数了";
                             Game::GUIManager::getInstance()->writeText(text);
-                            clickedObject->isClicked = false;//关闭点击的高亮
-                        }else {
+                            clickedObject->isClicked = false; //关闭点击的高亮
+                        } else {
                             auto f = attackComponent->Attack(clickedObject);
-                            if (f == true) { // 是否成功攻击到单位
+                            if (f == true) {
+                                // 是否成功攻击到单位
                                 std::wstring text = L"攻击成功";
                                 Game::GUIManager::getInstance()->writeText(text);
                                 std::cerr << "Attack !" << std::endl;
-                                playerStats->setCurrentAttackNum(playerStats->getAttackNum() - 1);// 攻击成功减少攻击次数
+                                playerStats->setCurrentAttackNum(playerStats->getAttackNum() - 1); // 攻击成功减少攻击次数
                             }
                         }
                     }
@@ -207,13 +208,24 @@ namespace Game {
                         round = false;
                     }
                     removeDeadEnemies();
-                }else {
+                } else {
+                    //DeBug--------------------------------------------------------------------------
+                    if (pbh::checkVector(gameObjects) == false) {
+                        std::cerr << "向量发生了重复" << std::endl;
+                        for (auto &gameObject: gameObjects) {
+                            std::cerr << gameObject << std::endl;
+                        }
+                        exit(-1);
+                    }
+                    //--------------------------------------------------------------------------------
+
+
                     auto AI = Game::EnemyAI::getInstance();
                     auto [index, x, y] = AI->getAction(currentScene->getEnemies(), player);
                     if (index != -1 && index < currentScene->getEnemies().size()) {
                         auto enemy = currentScene->getEnemies()[index];
                         auto enemyAttack = enemy->getComponent<EnemyAttackComponent>();
-                        enemyAttack->moveTo(x,y);
+                        enemyAttack->moveTo(x, y);
                         auto playerPositions = player->relativePosition;
                         if (playerPositions.x == x && playerPositions.y == y) {
                             enemyAttack->Attack(player);
@@ -230,52 +242,58 @@ namespace Game {
                     removeDeadEnemies();
                     roundNum++;
                     round = true;
-                    if (roundNum%3 == 0) {
+                    if (roundNum % 3 == 0) {
                         auto [type, x, y] = AI->generateEnemy();
                         Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
-                        Game::InputManager::getInstance()->registerGameObject(SceneManager::getInstance()->getCurrentScene()->getEnemies().back());
+                        Game::InputManager::getInstance()->registerGameObject(
+                            SceneManager::getInstance()->getCurrentScene()->getEnemies().back());
                         //增加敌人
                         //并且注册
                     }
-
                 }
             }
 
             GUIManager::getInstance()->update();
         }
 
+        // 在AppInstance::removeDeadEnemies()中修改
         void removeDeadEnemies() {
-            //删除场景中的尸体
+            // 1. 首先收集所有要删除的敌人指针
             auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
-            currentScene->clearDeadEnemies();
-            //真正让他在游戏中消失
-            auto check = [](GameObject* enemy) {
-                // std::cerr << "Checking enemy at " << enemy << std::endl;
+            std::vector<GameObject *> deadEnemies;
+
+            for (auto *enemy: currentScene->getEnemies()) {
                 auto stats = enemy->getComponent<EnemyStatsComponent>();
-                if (stats == nullptr) {     //这里是避免访问到玩家，因为玩家是没有这个组件的，会返回一个空指针
-                    return false;
+                if (stats && !stats->isAlive()) {
+                    deadEnemies.push_back(enemy);
                 }
-                return (! stats->isAlive());
-            };
-            auto its = std::remove_if(gameObjects.begin(), gameObjects.end(), check);//叫its是为了有区分度 。。。。。
-            for (auto it = its; it != gameObjects.end(); ++it) {
-                Game::InputManager::getInstance()->unregisterGameObject(*it); // 注销死掉的对象
-                if (*it != nullptr) {
-                    delete *it;
-                }
-                std::cerr << "Size is " << gameObjects.size() << std::endl;
-                std::cerr << "delete"  << it - gameObjects.begin() << std::endl;
             }
-            gameObjects.erase(its, gameObjects.end());
-            if (gameObjects.empty()) {
-                std::cout << "game objects are empty" << std::endl;
+
+            // 2. 从场景中移除
+            currentScene->clearDeadEnemies();
+
+            // 3. 从gameObjects中安全移除并删除对象
+            for (auto *deadEnemy: deadEnemies) {
+                // 注销死亡敌人
+                Game::InputManager::getInstance()->unregisterGameObject(deadEnemy);
+
+                // 从gameObjects移除
+                auto it = std::find(gameObjects.begin(), gameObjects.end(), deadEnemy);
+                if (it != gameObjects.end()) {
+                    // 删除对象
+                    delete *it;
+                    // 将指针置空，防止访问已释放的内存
+                    *it = nullptr;
+                    // 从向量中移除空指针
+                    gameObjects.erase(it);
+                }
             }
         }
 
         void clearGameObject() {
-            for (auto& ptr : gameObjects) {
+            for (auto &ptr: gameObjects) {
                 if (ptr != nullptr)
-                delete ptr;
+                    delete ptr;
             }
         }
 
@@ -285,25 +303,22 @@ namespace Game {
 
     private:
         bool round{1}; //这里的1代表的是玩家回合。0代表的是敌方回合
-        std::unordered_map<ComponentType,std::unique_ptr<Component>> componentsPool;
+        std::unordered_map<ComponentType, std::unique_ptr<Component> > componentsPool;
         std::shared_ptr<Scene> testScene;
-        std::vector<GameObject*> gameObjects;
-        GameObject* player{};
+        std::vector<GameObject *> gameObjects;
+        GameObject *player{};
         int roundNum{1};
     };
 }
 
 
-
-
 int main() {
-
     // 主循环
 
     //initial Test
     Game::AppInstance app;
     app.initial();
     app.run();
-    app.clear();    // 释放资源
+    app.clear(); // 释放资源
     return 0;
 }

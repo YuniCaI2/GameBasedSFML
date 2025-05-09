@@ -17,8 +17,6 @@ namespace Game {
         bool isHovered{false};
         bool isClicked{false};
 
-        GameObject() = default;
-
         void AddComponent(std::unique_ptr<Component>&& component);
         void setGlobalPosition(int x, int y);
         void setRelativePosition(int x, int y);
