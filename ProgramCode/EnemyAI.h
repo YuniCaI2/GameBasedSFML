@@ -46,21 +46,30 @@ namespace Game {
         // 获取特定敌人的所有可能移动位置
         std::vector<sf::Vector2i> getPossibleMoves(const EnemyData& enemy);
         
-        // 判断移动是否会击中玩家
-        bool willHitPlayer(const sf::Vector2i& position);
-        
+        // 判断位置是否与玩家位置相同（替代原来的willHitPlayer）
+        bool isPositionEqualToPlayer(const sf::Vector2i& position);
+
+        // 判断敌人是否可以从当前位置攻击玩家
+        bool canAttackPlayer(const EnemyData& enemy);
+
+        // 判断从指定位置是否可以攻击玩家
+        bool canAttackPlayerFromPosition(const sf::Vector2i& position, pbh::EnemyType type);
+
+        // 获取可移动位置（排除已被其他敌人占据的位置）
+        std::vector<sf::Vector2i> getMovablePositions(const EnemyData& enemy);
+
         // 曼哈顿距离计算
         int manhattanDistance(const sf::Vector2i& pos1, const sf::Vector2i& pos2);
-        
+
         // 获取特定类型敌人的攻击范围
         std::vector<sf::Vector2i> getAttackRange(const sf::Vector2i& position, pbh::EnemyType type);
-        
+
         int ActionCounter{1};
         int roundCounter{0}; //每次攻击一次增加1，这是为了在合适的时机刷新敌方单位
 
         std::vector<EnemyData> enemyDatas; // 替代原始的enemies向量
         PlayerData playerData; // 替代原始的player对象
-        
+
         // 极大极小算法的临时变量
         int bestEnemyIndex;
         sf::Vector2i bestMove;
