@@ -21,6 +21,7 @@ namespace Game {
     public:
         virtual void setHoverTexture(const std::string& texturePath) = 0;
         virtual void setDefaultTexture(const std::string& texturePath) = 0;
+        virtual sf::Vector2i getBoundBox() = 0;
         virtual sf::Sprite& getSprite() = 0;
     };
 }

@@ -22,6 +22,7 @@ void Game::RenderEngine::RenderScene(Game::Scene &scene) {
     Window::getWindow().draw(scene.getSprite());
     auto objects = scene.getObjects();
     for(auto& object : objects) {
+
         auto* renderComponent = object->getComponent<Game::RenderComponent>();
         if (object->isClicked) {
             auto* attackRange = object->getComponent<AttackRangeComponent>();

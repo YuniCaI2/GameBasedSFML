@@ -76,7 +76,8 @@ namespace pbh {
     enum SceneType {
         Draw,
         Fight,
-        Main
+        Main,
+        Stop
     };
 
     enum class WeaponType {

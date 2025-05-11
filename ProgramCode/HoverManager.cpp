@@ -8,6 +8,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include "Window.h"
+#include "Component/RenderComponent.h"
 
 Game::HoverManager * Game::HoverManager::getInstance() {
     static auto* instance = new HoverManager();
@@ -30,10 +31,13 @@ Game::GameObject * Game::HoverManager::getHoverObject() {
         auto relativeY = mousePos.y - i->globalPosition.y;
         // pbh::DeBug("Hover :", mousePos.x, mousePos.y);
 
-        if(relativeX > 0 && relativeX <= pbh::patchWidth && relativeY > 0 && relativeY <= pbh::patchHeight) {
+        auto BoundBox = i->getComponent<RenderComponent>()->getBoundBox();
+
+        if(relativeX > 0 && relativeX <= BoundBox.x && relativeY > 0 && relativeY <= BoundBox.y) {
             i->isHovered = true;
             return i;
         }
+
         i->isHovered = false;
     }
 

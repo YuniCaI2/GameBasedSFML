@@ -9,6 +9,10 @@
 #include<vector>
 
 namespace Game {
+    class Scene;
+}
+
+namespace Game {
     class GameObject;
     class InputManager {
     private:
@@ -22,6 +26,8 @@ namespace Game {
         static InputManager* getInstance();
         void registerGameObject(GameObject* gameObject);
         void unregisterGameObject(GameObject* gameObject);
+        void registerScene(std::shared_ptr<Scene> Scene);
+        void unregisterScene();//删完
         void processEvent(sf::Event& event);
         void update();
         bool isKeyPressed(sf::Keyboard::Key key) const;

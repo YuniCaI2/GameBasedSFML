@@ -4,7 +4,7 @@
 
 #include "InputManager.h"
 #include "HoverManager.h"
-
+#include "Scene.h"
 
 
 Game::InputManager * Game::InputManager::getInstance() {
@@ -22,6 +22,19 @@ void Game::InputManager::unregisterGameObject(GameObject *gameObject) {
     gameObjects.erase(it, gameObjects.end());
     HoverManager::getInstance()->unregisterHoverObject(gameObject);
 }
+
+void Game::InputManager::registerScene(std::shared_ptr<Scene> Scene) {
+    for (auto& obj : Scene->getObjects()) {
+        registerGameObject(obj);
+    }
+}
+
+void Game::InputManager::unregisterScene() {
+    for (auto& obj : gameObjects) {
+        unregisterGameObject(obj);
+    }
+}
+
 
 void Game::InputManager::processEvent(sf::Event& event) {
 

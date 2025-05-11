@@ -35,6 +35,8 @@ void Game::EnemyRenderComponent::initial(GameObject *gameObject) {
         auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
         defaultSprite.setScale(scaleX, scaleY);
         hoverSprite.setScale(scaleX, scaleY);
+        BoundBox.x = curSize.x;
+        BoundBox.y = curSize.y;
     }else {
         defaultSprite.setTexture(textures[enemyType].first);
         hoverSprite.setTexture(textures[enemyType].second);
@@ -43,6 +45,8 @@ void Game::EnemyRenderComponent::initial(GameObject *gameObject) {
         auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
         defaultSprite.setScale(scaleX, scaleY);
         hoverSprite.setScale(scaleX, scaleY);
+        BoundBox.x = curSize.x;
+        BoundBox.y = curSize.y;
     }
 }
 
@@ -65,4 +69,8 @@ sf::Sprite & Game::EnemyRenderComponent::getSprite(){
     }else {
         return defaultSprite;
     }
+}
+
+sf::Vector2i Game::EnemyRenderComponent::getBoundBox() {
+    return BoundBox;
 }

@@ -10,7 +10,11 @@ void Game::PlayerRenderComponent::initial(GameObject *gameObject) {
     defaultSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
     hoverSprite.setPosition(gameObject->globalPosition.x, gameObject->globalPosition.y);
     //这里和update的效果相同
-} 
+}
+
+sf::Vector2i Game::PlayerRenderComponent::getBoundBox() {
+    return BoundBox;
+}
 
 void Game::PlayerRenderComponent::setDefaultTexture(const std::string &texturePath) {
     if(!defaultTexture.loadFromFile(texturePath)) {
@@ -23,6 +27,8 @@ void Game::PlayerRenderComponent::setDefaultTexture(const std::string &texturePa
     auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
     // pbh::DeBug("Size:", scaleX, scaleY);
     defaultSprite.setScale(scaleX, scaleY);
+    BoundBox.x = defaultTexture.getSize().x;
+    BoundBox.y = defaultTexture.getSize().y;
 }
 
 void Game::PlayerRenderComponent::setHoverTexture(const std::string &texturePath) {
@@ -36,6 +42,8 @@ void Game::PlayerRenderComponent::setHoverTexture(const std::string &texturePath
     auto scaleY = pbh::patchHeight / static_cast<float>(curSize.y);
     // pbh::DeBug("Size:", scaleX, scaleY);
     hoverSprite.setScale(scaleX, scaleY);
+    BoundBox.x = hoverTexture.getSize().x;
+    BoundBox.y = hoverTexture.getSize().y;
 }
 
 void Game::PlayerRenderComponent::update(GameObject *gameObject) {

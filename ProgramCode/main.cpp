@@ -13,6 +13,7 @@
 #include "GUIManager.h"
 #include "InputManager.h"
 #include "Component/AttackRangeComponent.h"
+#include "Component/ButtonComponent.h"
 #include "Component/EnemyAttackComponent.h"
 #include "Component/EnemyRenderComponent.h"
 #include "Component/EnemyStatsComponent.h"
@@ -44,29 +45,82 @@ namespace Game {
             Game::GUIManager::getInstance()->init(player);
 
             //register
-            for (auto &g: gameObjects) {
-                Game::InputManager::getInstance()->registerGameObject(g);
-            }
+            // for (auto &g: gameObjects) {
+            //     Game::InputManager::getInstance()->registerGameObject(g);
+            // }
         }
 
         void initialSceneManager() {
             //初始化战斗场景
             {
-                testScene = std::make_shared<Game::Scene>();
-                testScene->setSprite("../resource/img.png")
+                fightScene = std::make_shared<Game::Scene>();
+                fightScene->setSprite("../resource/img.png")
                         .setSceneType(pbh::Fight); //设置场景背景
-                testScene->setPlayer(player);
-
+                fightScene->setPlayer(player);
                 //生成敌人
-                Game::SceneManager::getInstance()->setFightScene(testScene);
-                Game::SceneManager::getInstance()->SwitchToFightScene();
                 auto [type, x, y] = Game::EnemyAI::getInstance()->generateEnemy();
-                SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
+                fightScene->addEnemy(createEnemy(type, x, y));
+
+                Game::SceneManager::getInstance()->setFightScene(fightScene);
+                Game::SceneManager::getInstance()->SwitchToFightScene();
+            }
+            //初始化暂停页面
+            {
+                stopScene = std::make_shared<Game::Scene>();
+                stopScene->setSceneType(pbh::SceneType::Stop);
+                stopScene->setSprite("../resource/store/stop1.png");
+                auto buttonObject1 = new GameObject();
+                auto buttonObject2 = new GameObject();
+                auto buttonComponent1 = std::make_unique<Game::ButtonComponent>();
+                auto buttonComponent2 = std::make_unique<Game::ButtonComponent>();
+                buttonComponent1->setHoverTexture("../resource/store/exit0.png");
+                buttonComponent1->setDefaultTexture("../resource/store/exit1.png");
+                buttonComponent2->setHoverTexture("../resource/store/continue0.png");
+                buttonComponent2->setDefaultTexture("../resource/store/continue1.png");
+                auto CallBackFunc2 = [this]() {
+                    SceneManager::getInstance()->SwitchToFightScene();
+                };
+                auto CallBackFunc1 = [this]() {
+                    Window::getWindow().close();
+                };
+                buttonComponent1->setOnClick(CallBackFunc1);
+                buttonComponent2->setOnClick(CallBackFunc2);
+                buttonObject1->AddComponent(std::move(buttonComponent1));
+                buttonObject1->setGlobalPosition(pbh::scenePosX + 80, pbh::scenePosY + 220);
+                buttonObject2->AddComponent(std::move(buttonComponent2));
+                buttonObject2->setGlobalPosition(pbh::scenePosX + 80 + 140, pbh::scenePosY + 220);
+                stopScene->addObject(buttonObject1);
+                stopScene->addObject(buttonObject2);
+
+                Game::SceneManager::getInstance()->setStopScene(stopScene);
+            }
+            //初始化商店页面
+            {
+
             }
             //初始化主页面
             {
+                mainScene = std::make_shared<Game::Scene>();
+                mainScene->setSprite("../resource/main/begin2.png")
+                .setSceneType(pbh::SceneType::Main);
+                auto buttonObject = new GameObject();
+                auto buttonComponent = std::make_unique<Game::ButtonComponent>();
+                buttonComponent->setHoverTexture("../resource/main/mainButtonHover.png");
+                buttonComponent->setDefaultTexture("../resource/main/mainButtonDefault.png");
+                //设置按钮回调
+                auto CallBackFunc = [this]() {
+                    SceneManager::getInstance()->SwitchToFightScene();
+                };
+                buttonComponent->setOnClick(CallBackFunc);
+                buttonObject->AddComponent(std::move(buttonComponent));
+                buttonObject->setGlobalPosition(pbh::scenePosX + 125, pbh::scenePosY + 270);
+                //扔到对象池统一释放
+                gameObjects.push_back(buttonObject);
+                mainScene->addObject(buttonObject);
+
+                SceneManager::getInstance()->setMainScene(mainScene);
+                SceneManager::getInstance()->SwitchToMainScene();
             }
-            //初始化商店页面
         }
 
         void initialPlayer() {
@@ -153,7 +207,10 @@ namespace Game {
                 }
                 logical();
                 RenderEngine::getInstance()->Clear();
+                //主页不需要渲染GUI
+                if (SceneManager::getInstance()->getCurrentScene()->getSceneType() != pbh::SceneType::Main)
                 GUIManager::getInstance()->draw();
+
                 RenderEngine::getInstance()->RenderScene(*SceneManager::getInstance()->getCurrentScene());
                 RenderEngine::getInstance()->Display();
             }
@@ -161,17 +218,39 @@ namespace Game {
 
         void logical() {
             if (!player->getComponent<PlayerStatsComponent>()->isAlive()) {
-                std::wstring text = L"玩家已经死了";
+                std::wstring text = L"玩家已经死了\n,可以选择退出.\n 按下Esc";
                 Game::GUIManager::getInstance()->writeText(text);
                 return;
             }
 
-            for (auto &gameObject: gameObjects) {
-                gameObject->update();
+            // for (auto &gameObject: gameObjects) {
+            //     gameObject->update();
+            // }
+
+            if (SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Stop) {
+                auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+                for (auto &gameObject: currentScene->getObjects()) {
+                    gameObject->update();
+                }
+            }
+
+            if (Game::SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Main) {
+                auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+                for (auto &gameObject: currentScene->getObjects()) {
+                    gameObject->update();
+                }
             }
 
             if (Game::SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Fight) {
+                //首先判断是否暂停
+                if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Escape)) {
+                    SceneManager::getInstance()->SwitchToStopScene();
+                }
+
                 auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+                for (auto &gameObject: currentScene->getObjects()) {
+                    gameObject->update();
+                }
 
                 auto playerStats = player->getComponent<PlayerStatsComponent>();
                 if (round) {
@@ -290,6 +369,39 @@ namespace Game {
             }
         }
 
+        // void removeDeadEnemies() {
+        //     // 直接使用check函数，但在clearDeadEnemies()之前
+        //     auto check = [](GameObject* enemy) {
+        //         auto stats = enemy->getComponent<EnemyStatsComponent>();
+        //         return stats && !stats->isAlive();
+        //     };
+        //
+        //
+        //
+        //     // 从场景中移除
+        //     auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+        //     currentScene->clearDeadEnemies();
+        //
+        //
+        //     // 标记要删除的对象
+        //     auto its = std::remove_if(gameObjects.begin(), gameObjects.end(), check);
+        //
+        //     // 注销要删除的对象
+        //     for (auto it = its; it != gameObjects.end(); ++it) {
+        //         Game::InputManager::getInstance()->unregisterGameObject(*it);
+        //     }
+        //
+        //     // 删除对象并释放内存
+        //     for (auto it = its; it != gameObjects.end(); ++it) {
+        //         delete *it;
+        //         *it = nullptr;
+        //     }
+        //
+        //     // 从容器中移除
+        //     gameObjects.erase(its, gameObjects.end());
+        // }
+        //
+        //
         void clearGameObject() {
             for (auto &ptr: gameObjects) {
                 if (ptr != nullptr)
@@ -304,7 +416,10 @@ namespace Game {
     private:
         bool round{1}; //这里的1代表的是玩家回合。0代表的是敌方回合
         std::unordered_map<ComponentType, std::unique_ptr<Component> > componentsPool;
-        std::shared_ptr<Scene> testScene;
+        std::shared_ptr<Scene> fightScene;
+        std::shared_ptr<Scene> shopScene;
+        std::shared_ptr<Scene> mainScene;
+        std::shared_ptr<Scene> stopScene;
         std::vector<GameObject *> gameObjects;
         GameObject *player{};
         int roundNum{1};
