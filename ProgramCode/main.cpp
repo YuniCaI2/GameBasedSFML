@@ -134,7 +134,7 @@ namespace Game {
             {
                 mainScene = std::make_shared<Game::Scene>();
                 mainScene->setSprite("../resource/main/begin2.png")
-                .setSceneType(pbh::SceneType::Main);
+                        .setSceneType(pbh::SceneType::Main);
                 auto buttonObject = new GameObject();
                 auto buttonComponent = std::make_unique<Game::ButtonComponent>();
                 buttonComponent->setHoverTexture("../resource/main/mainButtonHover.png");
@@ -241,7 +241,7 @@ namespace Game {
                 RenderEngine::getInstance()->Clear();
                 //主页不需要渲染GUI
                 if (SceneManager::getInstance()->getCurrentScene()->getSceneType() != pbh::SceneType::Main)
-                GUIManager::getInstance()->draw();
+                    GUIManager::getInstance()->draw();
 
                 RenderEngine::getInstance()->RenderScene(*SceneManager::getInstance()->getCurrentScene());
                 RenderEngine::getInstance()->Display();
@@ -366,11 +366,13 @@ namespace Game {
                     removeDeadEnemies();
                     roundNum++;
                     round = true;
-                    if (roundNum % 2 == 0) {
-                        auto [type, x, y] = AI->generateEnemy();
-                        Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
-                        Game::InputManager::getInstance()->registerGameObject(
+                    if (roundNum % 1 == 0) {
+                        for (int i = 0; i < 1; i++) {
+                            auto [type, x, y] = AI->generateEnemy();
+                            Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
+                            Game::InputManager::getInstance()->registerGameObject(
                             SceneManager::getInstance()->getCurrentScene()->getEnemies().back());
+                        }
                         //增加敌人
                         //并且注册
                     }

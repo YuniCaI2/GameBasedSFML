@@ -27,8 +27,12 @@ bool Game::PlayerAttackComponent::Attack(GameObject *hitObject) {
                         }
                     }
                     else {
-                        stats->setCurrentHealth(0); // 一击必杀
-                        playerStats->addKill();
+                        stats->setCurrentHealth(stats->getCurrentHealth() - 1);//扣血
+                        if (! stats->isAlive()) {
+                            playerStats->addKill();
+                        }
+                        // stats->setCurrentHealth(0); // 一击必杀
+                        // playerStats->addKill();
                     }
                     playerStats->setCurrentAttackNum(playerStats->getAttackNum() - 1); // 攻击成功减少攻击次数
                     hitObject->isClicked = false;
