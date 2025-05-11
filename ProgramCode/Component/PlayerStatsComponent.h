@@ -6,6 +6,7 @@
 #define PLAYERSTATSCOMPONENT_H
 
 #include "StatsComponent.h"
+#include "../Item.h"
 
 namespace Game {
     class PlayerStatsComponent : public StatsComponent {
@@ -25,6 +26,11 @@ namespace Game {
         void update(GameObject *gameObject) override;
         bool isAlive() const override;
         void initial(GameObject *gameObject) override;
+        void addKill();
+        int getKillNum() const;
+        int setKillNum(int killNum);
+        void addItem(Item item);
+        std::vector<Item> getItems();
 
     private:
         int maxHealth;
@@ -33,6 +39,8 @@ namespace Game {
         int currentAttackNum;
         int maxMoveNum;
         int maxAttackNum;
+        int killNum{0};
+        std::vector<Item> items;
     };
 }
 

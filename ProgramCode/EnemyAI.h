@@ -64,7 +64,7 @@ namespace Game {
         // 极大极小算法的临时变量
         int bestEnemyIndex;
         sf::Vector2i bestMove;
-        int maxDepth{3}; // 搜索深度
+        int maxDepth{5}; // 搜索深度
     };
 }
 

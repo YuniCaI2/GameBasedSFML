@@ -74,7 +74,7 @@ namespace pbh {
     //敌人类型和武器类型一一对应
 
     enum SceneType {
-        Draw,
+        Shop,
         Fight,
         Main,
         Stop
@@ -85,6 +85,17 @@ namespace pbh {
         Knight, //骑士
         Bishop, // 相
         Rook,   //车
+    };
+
+    enum class ItemType {
+        Normal,
+        Attack,
+        Move
+    };
+
+    inline std::unordered_map<ItemType, std::string> ItemTexTable = {
+        {ItemType::Normal, "../resource/main/queen_1.png"},
+        {ItemType::Move, "../resource/main/queen_2.png"}
     };
 
     inline std::unordered_map<EnemyType, std::pair<std::string, std::string>> enemyTexPathTable = {

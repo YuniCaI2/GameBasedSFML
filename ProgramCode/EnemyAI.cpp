@@ -223,7 +223,7 @@ int Game::EnemyAI::evaluateBoard() {
         
         // 如果敌人可以攻击玩家，增加分数
         if (willHitPlayer(enemy.position)) {
-            score += 1000;
+            score += 10000;
         }
         
         // 如果敌人距离玩家更近，增加分数

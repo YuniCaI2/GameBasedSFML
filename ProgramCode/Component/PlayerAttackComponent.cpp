@@ -22,8 +22,13 @@ bool Game::PlayerAttackComponent::Attack(GameObject *hitObject) {
                     auto stats = hitObject->getComponent<EnemyStatsComponent>();
                     if (stats->getEnemyType() != enemyType)
                         stats->setCurrentHealth(stats->getCurrentHealth() - 1);//扣血
-                    else
+                        if (! stats->isAlive()) {
+                            playerStats->addKill();
+                        }
+                    else {
                         stats->setCurrentHealth(0); // 一击必杀
+                        playerStats->addKill();
+                    }
                     hitObject->isClicked = false;
                     return true;
                 }

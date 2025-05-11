@@ -68,6 +68,10 @@ bool Game::PlayerStatsComponent::isAlive() const {
 
 
 void Game::PlayerStatsComponent::turnStart() {
+    for (auto& i : items) {
+        maxAttackNum += i.addAttackNum;
+        maxMoveNum += i.addMoveAttribute;
+    }
     currentMoveNum = maxMoveNum;
     currentAttackNum = maxAttackNum;
 }
@@ -77,4 +81,24 @@ void Game::PlayerStatsComponent::initial(GameObject *gameObject) {
     maxHealth = 5;
     maxAttackNum = 2;
     maxMoveNum = 1;
+}
+
+void Game::PlayerStatsComponent::addKill() {
+    killNum++;
+}
+
+int Game::PlayerStatsComponent::getKillNum() const {
+    return killNum;
+}
+
+int Game::PlayerStatsComponent::setKillNum(int killNum) {
+    return this->killNum = killNum;
+}
+
+void Game::PlayerStatsComponent::addItem(Item item) {
+    items.push_back(item);
+}
+
+std::vector<Game::Item> Game::PlayerStatsComponent::getItems() {
+    return items;
 }

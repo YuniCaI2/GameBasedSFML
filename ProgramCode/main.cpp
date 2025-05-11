@@ -13,6 +13,7 @@
 #include "GUIManager.h"
 #include "InputManager.h"
 #include "Component/AttackRangeComponent.h"
+#include "Component/BoxComponent.h"
 #include "Component/ButtonComponent.h"
 #include "Component/EnemyAttackComponent.h"
 #include "Component/EnemyRenderComponent.h"
@@ -96,7 +97,38 @@ namespace Game {
             }
             //初始化商店页面
             {
-
+                shopScene = std::make_shared<Game::Scene>();
+                shopScene->setSprite("../resource/store/store.png")
+                        .setSceneType(pbh::SceneType::Shop);
+                auto BoxObject1 = new GameObject();
+                auto BoxObject2 = new GameObject();
+                auto BoxComponent1 = std::make_unique<Game::BoxComponent>();
+                BoxComponent1->setItem(pbh::ItemType::Normal);
+                auto CallBackFunc1 = [this]() {
+                    auto stats = player->getComponent<PlayerStatsComponent>();
+                    Item item;
+                    item.setType(pbh::ItemType::Normal);
+                    stats->addItem(item);
+                    Game::SceneManager::getInstance()->SwitchToFightScene();
+                };
+                BoxComponent1->setOnClick(CallBackFunc1);
+                auto BoxComponent2 = std::make_unique<Game::BoxComponent>();
+                BoxComponent2->setItem(pbh::ItemType::Move);
+                auto CallBackFunc2 = [this]() {
+                    auto stats = player->getComponent<PlayerStatsComponent>();
+                    Item item;
+                    item.setType(pbh::ItemType::Move);
+                    stats->addItem(item);
+                    Game::SceneManager::getInstance()->SwitchToFightScene();
+                };
+                BoxComponent2->setOnClick(CallBackFunc2);
+                BoxObject1->AddComponent(std::move(BoxComponent1));
+                BoxObject2->AddComponent(std::move(BoxComponent2));
+                BoxObject1->setGlobalPosition(pbh::scenePosX + 25, pbh::scenePosY + 170);
+                BoxObject2->setGlobalPosition(pbh::scenePosX + 125 + 25, pbh::scenePosY + 170);
+                shopScene->addObject(BoxObject1);
+                shopScene->addObject(BoxObject2);
+                SceneManager::getInstance()->setShopScene(shopScene);
             }
             //初始化主页面
             {
@@ -226,6 +258,15 @@ namespace Game {
             // for (auto &gameObject: gameObjects) {
             //     gameObject->update();
             // }
+            if (SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Shop) {
+                if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Escape)) {
+                    SceneManager::getInstance()->SwitchToStopScene();
+                }
+                auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
+                for (auto &gameObject: currentScene->getObjects()) {
+                    gameObject->update();
+                }
+            }
 
             if (SceneManager::getInstance()->getCurrentScene()->getSceneType() == pbh::SceneType::Stop) {
                 auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
@@ -246,13 +287,19 @@ namespace Game {
                 if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Escape)) {
                     SceneManager::getInstance()->SwitchToStopScene();
                 }
-
                 auto currentScene = Game::SceneManager::getInstance()->getCurrentScene();
                 for (auto &gameObject: currentScene->getObjects()) {
                     gameObject->update();
                 }
 
                 auto playerStats = player->getComponent<PlayerStatsComponent>();
+
+                //判断是否去商店
+                if (playerStats->getKillNum() == 10) {
+                    SceneManager::getInstance()->SwitchToShopScene();
+                    playerStats->setKillNum(0);
+                }
+
                 if (round) {
                     auto clickedObject = Game::InputManager::getInstance()->getClickedObject();
                     //攻击行为

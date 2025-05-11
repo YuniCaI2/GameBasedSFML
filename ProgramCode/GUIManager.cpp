@@ -15,6 +15,8 @@ namespace Game{
     int GUIManager::healthY = 135;
     int GUIManager::moveNumX = 55;
     int GUIManager::moveNumY = 185;
+    int GUIManager::killX = 630;
+    int GUIManager::killY = 430;
     int GUIManager::attackNumX = 55;
     int GUIManager::attackNumY = 225;
     int GUIManager::PawnPicX = 15;
@@ -27,6 +29,7 @@ namespace Game{
     int GUIManager::RookPicY = 280 + 135;
 
 
+
     void GUIManager::setStatsText() {//获取属性组件显示血量
         auto playerStats = player->getComponent<Game::PlayerStatsComponent>();
         auto health = playerStats->getCurrentHealth();
@@ -34,6 +37,14 @@ namespace Game{
 
         healthText.setFont(font);
         healthText.setString(std::to_string(health) + "/" + std::to_string(playerStats->getMaxHealth()) + " HP");
+
+        //击杀
+        killText.setFont(font);
+        killText.setCharacterSize(28);
+        killText.setPosition(killX, killY);
+        std::wstring killInfo = L"KILL:";
+        killInfo += std::to_wstring(playerStats->getKillNum());
+        killText.setString(killInfo);
 
         //显示血量
         healthText.setPosition(healthX, healthY);
@@ -53,6 +64,22 @@ namespace Game{
         attackNumText.setPosition(attackNumX, attackNumY);
         attackNumText.setCharacterSize(16);
 
+        if (itemNum < playerStats->getItems().size()) {
+            //addItem
+            auto t = 0;
+            for (int i = 0; i < playerStats->getItems().size(); i++) {
+                sf::Sprite sp;
+                sf::Texture texture;
+                texture.loadFromFile(pbh::ItemTexTable[playerStats->getItems()[i].type]);
+                GUITextures.push_back(texture);
+                sp.setTexture(GUITextures[GUITextures.size() - 1]);
+                sp.setScale(80.0 / texture.getSize().x,120.0 / texture.getSize().y);
+                sp.setPosition(215 + 96 * i, 15);
+                GUISprites.push_back(sp);
+                t++;
+            }
+            itemNum = t;
+        }
     }
 
     void GUIManager::update()
@@ -104,9 +131,12 @@ namespace Game{
 
         //绘制字
         Window::getWindow().draw(textBuffer);
+        Window::getWindow().draw(killText);
         Window::getWindow().draw(healthText);
         Window::getWindow().draw(moveNumText);
         Window::getWindow().draw(attackNumText);
+
+        //绘制items
     }
     
 

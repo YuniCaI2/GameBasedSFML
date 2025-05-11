@@ -30,6 +30,9 @@ class GUIManager
         sf::Text healthText;
         sf::Text moveNumText;
         sf::Text attackNumText;
+        sf::Text killText;
+
+        int itemNum{0};
 
 
     //额 GUI精灵
@@ -41,6 +44,7 @@ class GUIManager
         static int textWidth, textHeight;
         static int healthX, healthY;
         static int moveNumX, moveNumY;
+        static int killX, killY;
         static int attackNumX, attackNumY;
         static int PawnPicX, PawnPicY;
         static int KnightPicX, KnightPicY;
