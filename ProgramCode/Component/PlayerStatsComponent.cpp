@@ -68,12 +68,14 @@ bool Game::PlayerStatsComponent::isAlive() const {
 
 
 void Game::PlayerStatsComponent::turnStart() {
+    auto tempAttackNum = this->maxAttackNum;
+    auto tempMoveNum = this->maxMoveNum;
     for (auto& i : items) {
-        maxAttackNum += i.addAttackNum;
-        maxMoveNum += i.addMoveAttribute;
+        tempAttackNum += i.addAttackNum;
+        tempMoveNum += i.addMoveAttribute;
     }
-    currentMoveNum = maxMoveNum;
-    currentAttackNum = maxAttackNum;
+    currentMoveNum = tempMoveNum;
+    currentAttackNum = tempAttackNum;
 }
 
 void Game::PlayerStatsComponent::initial(GameObject *gameObject) {
@@ -85,6 +87,7 @@ void Game::PlayerStatsComponent::initial(GameObject *gameObject) {
 
 void Game::PlayerStatsComponent::addKill() {
     killNum++;
+    sumKillNum++;
 }
 
 int Game::PlayerStatsComponent::getKillNum() const {
@@ -93,6 +96,10 @@ int Game::PlayerStatsComponent::getKillNum() const {
 
 int Game::PlayerStatsComponent::setKillNum(int killNum) {
     return this->killNum = killNum;
+}
+
+int Game::PlayerStatsComponent::getSumKillNum() {
+    return sumKillNum;
 }
 
 void Game::PlayerStatsComponent::addItem(Item item) {

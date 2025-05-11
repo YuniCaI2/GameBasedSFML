@@ -29,6 +29,7 @@ namespace Game {
         void addKill();
         int getKillNum() const;
         int setKillNum(int killNum);
+        int getSumKillNum();
         void addItem(Item item);
         std::vector<Item> getItems();
 
@@ -40,6 +41,7 @@ namespace Game {
         int maxMoveNum;
         int maxAttackNum;
         int killNum{0};
+        int sumKillNum{0};
         std::vector<Item> items;
     };
 }

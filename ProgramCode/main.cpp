@@ -295,7 +295,7 @@ namespace Game {
                 auto playerStats = player->getComponent<PlayerStatsComponent>();
 
                 //判断是否去商店
-                if (playerStats->getKillNum() == 10) {
+                if (playerStats->getKillNum() == 10 && playerStats->getItems().size() < 4) {
                     SceneManager::getInstance()->SwitchToShopScene();
                     playerStats->setKillNum(0);
                 }
@@ -318,8 +318,6 @@ namespace Game {
                                 // 是否成功攻击到单位
                                 std::wstring text = L"攻击成功";
                                 Game::GUIManager::getInstance()->writeText(text);
-                                std::cerr << "Attack !" << std::endl;
-                                playerStats->setCurrentAttackNum(playerStats->getAttackNum() - 1); // 攻击成功减少攻击次数
                             }
                         }
                     }
@@ -368,7 +366,7 @@ namespace Game {
                     removeDeadEnemies();
                     roundNum++;
                     round = true;
-                    if (roundNum % 3 == 0) {
+                    if (roundNum % 2 == 0) {
                         auto [type, x, y] = AI->generateEnemy();
                         Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
                         Game::InputManager::getInstance()->registerGameObject(

@@ -43,7 +43,7 @@ namespace Game{
         killText.setCharacterSize(28);
         killText.setPosition(killX, killY);
         std::wstring killInfo = L"KILL:";
-        killInfo += std::to_wstring(playerStats->getKillNum());
+        killInfo += std::to_wstring(playerStats->getSumKillNum());
         killText.setString(killInfo);
 
         //显示血量
