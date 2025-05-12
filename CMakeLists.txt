@@ -4,8 +4,13 @@ project(sfmlTest)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(WIN32)
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/ProgramCode/SFML/SFML-2.6.2/lib/cmake/SFML")
 find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
+endif ()
+if (APPLE)
+    find_package(SFML 2.6 COMPONENTS system window graphics network audio REQUIRED)
+endif ()
 
 # Add executable with source files
 # 搜索主目录中的文件
@@ -40,17 +45,23 @@ set(PROJECT_SOURCES ${MAIN_SOURCES} ${COMPONENT_SOURCES} ${GAMEOBJECT_TYPE_SOURC
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 # Link SFML libraries to the target
-target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        sfml-graphics
-        sfml-window
-        sfml-system
-)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+            PRIVATE
+            sfml-graphics
+            sfml-window
+            sfml-system
+    )
 
-# Copy SFML DLLs to the executable directory
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/ProgramCode/SFML/SFML-2.6.2/bin"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
+    # Copy SFML DLLs to the executable directory
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/ProgramCode/SFML/SFML-2.6.2/bin"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+endif ()
 # 最后一个是生成器表达式，代表着生成可执行文件的目录
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME} sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+endif ()
