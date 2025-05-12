@@ -326,7 +326,7 @@ namespace Game {
                         std::wstring text = L"敌方回合";
                         Game::GUIManager::getInstance()->writeText(text);
                     }
-                    if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::P)) {
+                    if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Space)) {
                         std::wstring text = L"玩家跳过，敌方回合";
                         Game::GUIManager::getInstance()->writeText(text);
                         round = false;
@@ -366,7 +366,7 @@ namespace Game {
                     removeDeadEnemies();
                     roundNum++;
                     round = true;
-                    if (roundNum % 1 == 0) {
+                    if (roundNum % 2 == 0) {
                         for (int i = 0; i < 1; i++) {
                             auto [type, x, y] = AI->generateEnemy();
                             Game::SceneManager::getInstance()->getCurrentScene()->addEnemy(createEnemy(type, x, y));
